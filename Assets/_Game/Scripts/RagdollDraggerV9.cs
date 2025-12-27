@@ -1,16 +1,16 @@
 using UnityEngine;
 using System.Collections;
 
-public class RagdollDraggerV9 : MonoBehaviour
+public class RagdollDraggerV13 : MonoBehaviour
 {
     [Header("Cài đặt")]
     public string stretchableTag = "Head";
-    public float mouseForce = 5000f;
+    public float mouseForce = 3000f;       // [GIẢM] Giảm lực chút cho đỡ rung
     public float dragElasticity = 100f;
 
     [Header("Giới hạn góc xoay khi kéo")]
-    [Tooltip("Góc tối đa mà bộ phận có thể xoay khi đang bị kéo (độ)")]
-    public float dragRotationLimit = 40f; // <-- [MỚI] Giới hạn 40 độ
+    [Tooltip("Góc tối đa (độ)")]
+    public float dragRotationLimit = 30f;
 
     [Header("Cấu hình Nảy & Hồi phục")]
     public float returnSpring = 2000f;
@@ -32,14 +32,15 @@ public class RagdollDraggerV9 : MonoBehaviour
     private bool isDragging = false;
     private float distToCamera;
 
-    // Biến lưu thông số khớp cũ (Motion & Drive)
+    // Lưu thông số cũ
     private ConfigurableJointMotion oldX, oldY, oldZ;
     private ConfigurableJointMotion oldAngX, oldAngY, oldAngZ;
     private JointDrive oldXDrive, oldYDrive, oldZDrive;
     private JointDrive oldAngXDrive, oldAngYDrive;
     private RotationDriveMode oldDriveMode;
+    private JointProjectionMode oldProjectionMode; // [MỚI] Lưu chế độ Projection
 
-    // [MỚI] Biến lưu giới hạn khớp cũ (Limits)
+    // Lưu giới hạn cũ
     private SoftJointLimit oldLowXLimit, oldHighXLimit;
     private SoftJointLimit oldYLimit, oldZLimit;
 
@@ -106,16 +107,13 @@ public class RagdollDraggerV9 : MonoBehaviour
         originalConnectedAnchor = draggedJoint.connectedAnchor;
         originalJointTargetRotation = draggedJoint.targetRotation;
 
-        // Lưu Motion cũ
         oldX = draggedJoint.xMotion; oldY = draggedJoint.yMotion; oldZ = draggedJoint.zMotion;
         oldAngX = draggedJoint.angularXMotion; oldAngY = draggedJoint.angularYMotion; oldAngZ = draggedJoint.angularZMotion;
-
-        // Lưu Drive cũ
         oldXDrive = draggedJoint.xDrive; oldYDrive = draggedJoint.yDrive; oldZDrive = draggedJoint.zDrive;
         oldAngXDrive = draggedJoint.angularXDrive; oldAngYDrive = draggedJoint.angularYZDrive;
         oldDriveMode = draggedJoint.rotationDriveMode;
+        oldProjectionMode = draggedJoint.projectionMode; // [MỚI]
 
-        // [MỚI] Lưu Limits cũ (để lát trả lại)
         oldLowXLimit = draggedJoint.lowAngularXLimit;
         oldHighXLimit = draggedJoint.highAngularXLimit;
         oldYLimit = draggedJoint.angularYLimit;
@@ -124,7 +122,7 @@ public class RagdollDraggerV9 : MonoBehaviour
         // 3. Cấu hình theo chế độ
         if (currentMode == DragMode.Stretch)
         {
-            // --- LOGIC KÉO ĐẦU (GIỮ NGUYÊN) ---
+            // --- KÉO ĐẦU (GIỮ NGUYÊN) ---
             Vector3 currentWorldAnchor = originalConnectedBody.transform.TransformPoint(originalConnectedAnchor);
             currentWorldAnchor.x = originalConnectedBody.transform.position.x + originalConnectedAnchor.x;
 
@@ -144,26 +142,47 @@ public class RagdollDraggerV9 : MonoBehaviour
         }
         else
         {
-            // --- LOGIC KÉO TAY/CHÂN (CẬP NHẬT MỚI) ---
-            // Áp dụng giới hạn góc xoay cứng (ví dụ 40 độ)
+            // --- KÉO TAY/CHÂN (ĐÃ SỬA LỖI GIẬT & DÃN) ---
 
+            // A. Cài đặt giới hạn góc 30 độ
             SoftJointLimit limit = new SoftJointLimit();
-            limit.limit = dragRotationLimit; // 40
+            limit.limit = dragRotationLimit;
+            limit.bounciness = 0f; // Không cho nảy ở giới hạn (giảm giật)
+            limit.contactDistance = 0.05f;
 
             SoftJointLimit negLimit = new SoftJointLimit();
-            negLimit.limit = -dragRotationLimit; // -40
+            negLimit.limit = -dragRotationLimit;
+            negLimit.bounciness = 0f;
 
-            // Gán giới hạn mới
             draggedJoint.lowAngularXLimit = negLimit;
             draggedJoint.highAngularXLimit = limit;
             draggedJoint.angularYLimit = limit;
             draggedJoint.angularZLimit = limit;
 
-            // [QUAN TRỌNG] Phải chuyển Motion sang 'Limited' thì giới hạn trên mới có tác dụng
-            // Bất kể cài đặt cũ là Free hay Locked, giờ phải là Limited
+            // B. Giới hạn xoay
             draggedJoint.angularXMotion = ConfigurableJointMotion.Limited;
             draggedJoint.angularYMotion = ConfigurableJointMotion.Limited;
             draggedJoint.angularZMotion = ConfigurableJointMotion.Limited;
+
+            // C. KHÓA CỨNG VỊ TRÍ (CHỐNG DÃN CHÂN)
+            draggedJoint.xMotion = ConfigurableJointMotion.Locked;
+            draggedJoint.yMotion = ConfigurableJointMotion.Locked;
+            draggedJoint.zMotion = ConfigurableJointMotion.Locked;
+
+            // D. [QUAN TRỌNG] TẮT CƠ BẮP (Joint Drive)
+            // Để tay chân "mềm nhũn" khi kéo, tránh việc cơ bắp cũ đánh nhau với chuột
+            JointDrive zeroDrive = new JointDrive { positionSpring = 0, positionDamper = 0, maximumForce = 0 };
+            draggedJoint.xDrive = zeroDrive;
+            draggedJoint.yDrive = zeroDrive;
+            draggedJoint.zDrive = zeroDrive;
+            draggedJoint.angularXDrive = zeroDrive;
+            draggedJoint.angularYZDrive = zeroDrive;
+
+            // E. [QUAN TRỌNG] BẬT PROJECTION (CHỐNG DÃN)
+            // Nếu chân lỡ bị kéo dãn ra do lỗi vật lý, nó sẽ tự hít lại
+            draggedJoint.projectionMode = JointProjectionMode.PositionAndRotation;
+            draggedJoint.projectionDistance = 0.01f;
+            draggedJoint.projectionAngle = 1f;
         }
 
         draggedRb.angularVelocity = Vector3.zero;
@@ -177,7 +196,10 @@ public class RagdollDraggerV9 : MonoBehaviour
         mouseJoint = mouseDragger.AddComponent<SpringJoint>();
         mouseJoint.connectedBody = draggedRb;
         mouseJoint.spring = mouseForce;
-        mouseJoint.damper = 10f;
+
+        // [QUAN TRỌNG] Tăng Damper chuột lên để kéo mượt hơn, giảm rung
+        mouseJoint.damper = 50f;
+
         mouseJoint.maxDistance = 0f;
         mouseJoint.autoConfigureConnectedAnchor = false;
         mouseJoint.connectedAnchor = draggedRb.transform.InverseTransformPoint(hitPoint);
@@ -214,12 +236,15 @@ public class RagdollDraggerV9 : MonoBehaviour
             draggedJoint.rotationDriveMode = RotationDriveMode.Slerp;
             draggedJoint.slerpDrive = snapDrive;
 
+            // Nếu là tay chân, lúc nãy ta đã tắt X/Y/Z drive, giờ phải set lại nếu cần
+            // Nhưng tốt nhất là Stretch mode dùng Free, còn Constrained mode giữ Locked
             if (currentMode == DragMode.Stretch)
             {
                 draggedJoint.xMotion = ConfigurableJointMotion.Free;
                 draggedJoint.yMotion = ConfigurableJointMotion.Free;
                 draggedJoint.zMotion = ConfigurableJointMotion.Free;
                 draggedJoint.xDrive = snapDrive; draggedJoint.yDrive = snapDrive; draggedJoint.zDrive = snapDrive;
+
                 draggedJoint.angularXMotion = ConfigurableJointMotion.Free;
                 draggedJoint.angularYMotion = ConfigurableJointMotion.Free;
                 draggedJoint.angularZMotion = ConfigurableJointMotion.Free;
@@ -241,21 +266,20 @@ public class RagdollDraggerV9 : MonoBehaviour
             draggedRb.velocity = Vector3.zero;
 #endif
 
-            // 4. [MỚI] TRẢ LẠI GIỚI HẠN KHỚP CŨ (LIMITS)
-            // Trả lại các giới hạn vật lý ban đầu của Ragdoll
+            // 4. Trả lại cài đặt cũ
             draggedJoint.lowAngularXLimit = oldLowXLimit;
             draggedJoint.highAngularXLimit = oldHighXLimit;
             draggedJoint.angularYLimit = oldYLimit;
             draggedJoint.angularZLimit = oldZLimit;
 
-            // 5. Trả lại cài đặt Motion & Drive cũ
             draggedJoint.xMotion = oldX; draggedJoint.yMotion = oldY; draggedJoint.zMotion = oldZ;
             draggedJoint.angularXMotion = oldAngX; draggedJoint.angularYMotion = oldAngY; draggedJoint.angularZMotion = oldAngZ;
             draggedJoint.xDrive = oldXDrive; draggedJoint.yDrive = oldYDrive; draggedJoint.zDrive = oldZDrive;
             draggedJoint.angularXDrive = oldAngXDrive; draggedJoint.angularYZDrive = oldAngYDrive;
             draggedJoint.rotationDriveMode = oldDriveMode;
+            draggedJoint.projectionMode = oldProjectionMode; // Trả lại Projection
 
-            // 6. Xả đóng băng
+            // 5. Xả đóng băng
             foreach (Rigidbody rb in allRagdollRbs)
             {
                 if (rb != null) rb.isKinematic = false;

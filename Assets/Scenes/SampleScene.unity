@@ -1214,7 +1214,7 @@ ConfigurableJoint:
   m_XMotion: 0
   m_YMotion: 0
   m_ZMotion: 0
-  m_AngularXMotion: 0
+  m_AngularXMotion: 1
   m_AngularYMotion: 0
   m_AngularZMotion: 0
   m_LinearLimitSpring:
@@ -1346,6 +1346,19 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.1
   m_Center: {x: 0, y: 0.1, z: 0}
+--- !u!114 &347277463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 347277455}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0ad6e3c2c32a4d7b92843c4b7be7ffe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Test
+  rotationAngle: {x: 45, y: 0, z: 0}
 --- !u!1 &370599739 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -9070493210130169274, guid: a92dcd476bf3c4c8aa4981d39ec7a014, type: 3}
@@ -2076,6 +2089,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3948933247560734027, guid: a92dcd476bf3c4c8aa4981d39ec7a014, type: 3}
       insertIndex: -1
       addedObject: {fileID: 647091528}
+    - targetCorrespondingSourceObject: {fileID: 3948933247560734027, guid: a92dcd476bf3c4c8aa4981d39ec7a014, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 647091532}
     - targetCorrespondingSourceObject: {fileID: -1781356600409242780, guid: a92dcd476bf3c4c8aa4981d39ec7a014, type: 3}
       insertIndex: -1
       addedObject: {fileID: 347277459}
@@ -2085,6 +2101,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -1781356600409242780, guid: a92dcd476bf3c4c8aa4981d39ec7a014, type: 3}
       insertIndex: -1
       addedObject: {fileID: 347277461}
+    - targetCorrespondingSourceObject: {fileID: -1781356600409242780, guid: a92dcd476bf3c4c8aa4981d39ec7a014, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 347277463}
     - targetCorrespondingSourceObject: {fileID: -9070493210130169274, guid: a92dcd476bf3c4c8aa4981d39ec7a014, type: 3}
       insertIndex: -1
       addedObject: {fileID: 370599741}
@@ -3001,6 +3020,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &647091532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 647091526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0ad6e3c2c32a4d7b92843c4b7be7ffe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Test
+  rotationAngle: {x: 45, y: 0, z: 0}
 --- !u!1 &702395797 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -751476226918971245, guid: a92dcd476bf3c4c8aa4981d39ec7a014, type: 3}
