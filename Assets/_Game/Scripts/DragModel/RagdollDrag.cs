@@ -1,20 +1,28 @@
-using System.Collections;
 using UnityEngine;
+using System.Collections;
 
 public class RagdollDrag : MonoBehaviour
 {
-    public string stretchableTag = "Head";
+    // ========================================================================
+    // 1. CẤU HÌNH CHUNG
+    // ========================================================================
+    [Header("--- PHÂN LOẠI TAG ---")]
+    public string stretchableTag = "Head"; // Tag để Kéo đầu
+    public string limbTag = "Untagged";    // Tag để Xoay tay/chân
 
+    // ========================================================================
+    // 2. BIẾN & CẤU HÌNH CỦA SCRIPT GỐC (KÉO ĐẦU)
+    // ========================================================================
+    [Header("--- KÉO ĐẦU (HEAD) ---")]
     [Header("Lực kéo chuột (Mouse Joint)")]
-    public float dragSpring = 500f; // GIẢM XUỐNG: 1000 hơi cứng, 500 sẽ mềm hơn
-    public float dragDamper = 10f;  // TĂNG LÊN: Để triệt tiêu dao động nhanh hơn
+    public float dragSpring = 500f;
+    public float dragDamper = 10f;
 
     [Header("Cấu hình Nảy về (Return)")]
     public float returnSpring = 2000f;
     public float returnDamper = 50f;
 
-    private Camera m_cam;
-    private bool isDragging;
+    private bool isDraggingHead; // Đổi tên nhẹ để phân biệt với Limb
     private float distToCamera;
 
     private ConfigurableJoint internalJoint;
@@ -24,14 +32,31 @@ public class RagdollDrag : MonoBehaviour
     private JointSnapshot snapshot;
     private Vector3 initialRelativePos;
     private Coroutine returnCoroutine;
-
-    // Biến lưu vị trí chuột mượt
     private Vector3 currentMouseWorldPos;
 
-    // Lưu thông số vật lý cũ
     private float originalDrag;
     private float originalAngularDrag;
     private bool originalUseGravity;
+
+    // ========================================================================
+    // 3. BIẾN & CẤU HÌNH CỦA SCRIPT XOAY (LIMB)
+    // ========================================================================
+    [Header("--- XOAY TAY CHÂN (LIMB) ---")]
+    public float rotateSpeed = 10f;
+    [Range(0f, 170f)] public float maxAngle = 170f;
+    public Vector3 pointingAxis = Vector3.up;
+    public Vector3 rotateAxis = Vector3.forward;
+
+    private bool isDraggingLimb;
+    private Rigidbody limbRb;
+    private ConfigurableJoint limbJoint;
+    private RagdollPuppetMaster puppetMaster;
+
+    // Lưu trạng thái cũ của Limb
+    private ConfigurableJointMotion oldAngX, oldAngY, oldAngZ;
+    private Vector3 capturedStartDirection;
+
+    private Camera m_cam;
 
     private void Start()
     {
@@ -46,21 +71,31 @@ public class RagdollDrag : MonoBehaviour
             Ray ray = m_cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                if (hit.collider != null && hit.collider.CompareTag(stretchableTag))
+                if (hit.rigidbody != null && hit.collider != null)
                 {
-                    StartDraggingHead(hit.rigidbody, hit.point);
+                    // A. NẾU LÀ ĐẦU -> CHẠY LOGIC GỐC CỦA BẠN
+                    if (hit.collider.CompareTag(stretchableTag))
+                    {
+                        StartDraggingHead(hit.rigidbody, hit.point);
+                    }
+                    // B. NẾU LÀ TAY/CHÂN -> CHẠY LOGIC XOAY
+                    else if (hit.collider.CompareTag(limbTag))
+                    {
+                        StartDraggingLimb(hit.rigidbody);
+                    }
                 }
             }
         }
 
         // 2. THẢ CHUỘT
-        if (Input.GetMouseButtonUp(0) && isDragging)
+        if (Input.GetMouseButtonUp(0))
         {
-            StopDraggingAndBounceHead();
+            if (isDraggingHead) StopDraggingAndBounceHead();
+            if (isDraggingLimb) StopDraggingLimb();
         }
 
-        // 3. TÍNH TOÁN VỊ TRÍ CHUỘT (QUAN TRỌNG: Làm ở Update để mượt)
-        if (isDragging)
+        // 3. TÍNH TOÁN VỊ TRÍ CHUỘT (Cho Head)
+        if (isDraggingHead)
         {
             Vector3 mousePos = Input.mousePosition;
             mousePos.z = distToCamera;
@@ -70,20 +105,29 @@ public class RagdollDrag : MonoBehaviour
 
     public void FixedUpdate()
     {
-        // 4. ÁP DỤNG VÀO VẬT LÝ (Chỉ gán vị trí đã tính ở trên)
-        if (isDragging && mouseJoint != null)
+        // LOGIC KÉO ĐẦU (Giữ nguyên)
+        if (isDraggingHead && mouseJoint != null)
         {
             mouseJoint.connectedAnchor = currentMouseWorldPos;
         }
+
+        // LOGIC XOAY TAY (Mới thêm)
+        if (isDraggingLimb && limbRb != null)
+        {
+            RotateLimbTowardsMouse();
+        }
     }
+
+    // ========================================================================
+    // PHẦN LOGIC 1: KÉO ĐẦU (COPY Y NGUYÊN TỪ SCRIPT GỐC CỦA BẠN)
+    // ========================================================================
 
     public void StartDraggingHead(Rigidbody hitRb, Vector3 hitPoint)
     {
-        if (returnCoroutine != null) StopCoroutine(returnCoroutine); // Stop coroutine cũ nếu click liên tiếp
+        if (returnCoroutine != null) StopCoroutine(returnCoroutine);
 
         currentRb = hitRb;
 
-        // Tính khoảng cách Z so với camera ngay lúc click
         Vector3 screenPos = m_cam.WorldToScreenPoint(hitPoint);
         distToCamera = screenPos.z;
 
@@ -108,41 +152,36 @@ public class RagdollDrag : MonoBehaviour
         }
 
         // --- B. LƯU & CHỈNH SỬA RIGIDBODY ---
-        originalDrag = hitRb.linearDamping; // Unity 6 đổi tên thành linearDamping (bản cũ là drag)
+        originalDrag = hitRb.linearDamping;
         originalAngularDrag = hitRb.angularDamping;
         originalUseGravity = hitRb.useGravity;
 
-        hitRb.linearDamping = 10f; // TĂNG LÊN 10 để vật đỡ trôi tự do quá trớn
+        hitRb.linearDamping = 10f; // TĂNG LÊN 10 -> Đây là lý do nó không bị xoay!
         hitRb.angularDamping = 10f;
         hitRb.useGravity = false;
 
-        // Bật Interpolate để hình ảnh mượt (nếu chưa bật)
         hitRb.interpolation = RigidbodyInterpolation.Interpolate;
 
         // --- C. TẠO DÂY THỪNG ẢO ---
         mouseJoint = hitRb.gameObject.AddComponent<SpringJoint>();
         mouseJoint.autoConfigureConnectedAnchor = false;
-
-        // Neo vào điểm click trên vật
         mouseJoint.anchor = hitRb.transform.InverseTransformPoint(hitPoint);
 
-        // Cập nhật vị trí chuột ngay lập tức để không bị giật frame đầu
         Vector3 mousePosInit = Input.mousePosition;
         mousePosInit.z = distToCamera;
         currentMouseWorldPos = m_cam.ScreenToWorldPoint(mousePosInit);
         mouseJoint.connectedAnchor = currentMouseWorldPos;
 
         mouseJoint.spring = dragSpring;
-        mouseJoint.damper = dragDamper * 5; // Damper cao giúp giảm rung
+        mouseJoint.damper = dragDamper * 5;
         mouseJoint.maxDistance = 0f;
 
-        // Lưu vị trí tương đối
         if (internalJoint != null && internalJoint.connectedBody != null)
             initialRelativePos = internalJoint.connectedBody.transform.InverseTransformPoint(hitRb.position);
         else
             initialRelativePos = hitRb.position;
 
-        isDragging = true;
+        isDraggingHead = true;
     }
 
     public void StopDraggingAndBounceHead()
@@ -156,18 +195,20 @@ public class RagdollDrag : MonoBehaviour
             currentRb.angularDamping = originalAngularDrag;
         }
 
-        if (internalJoint != null && isDragging)
+        if (internalJoint != null && isDraggingHead)
         {
-            isDragging = false;
+            isDraggingHead = false;
             returnCoroutine = StartCoroutine(DoReturnPhysicsHead());
+        }
+        else
+        {
+            isDraggingHead = false;
+            currentRb = null; // Reset nếu không có Joint
         }
     }
 
-    // ... Phần Coroutine DoReturnPhysics và Struct JointSnapshot giữ nguyên như cũ ...
     IEnumerator DoReturnPhysicsHead()
     {
-        // (Copy lại y nguyên đoạn code cũ của bạn vào đây)
-        // Lưu ý: Đảm bảo khi restore, kiểm tra null kỹ
         internalJoint.targetPosition = Vector3.zero;
         internalJoint.targetRotation = Quaternion.identity;
 
@@ -201,7 +242,6 @@ public class RagdollDrag : MonoBehaviour
             if (internalJoint.connectedBody != null)
                 velocityMag = (currentRb.linearVelocity - internalJoint.connectedBody.linearVelocity).magnitude;
 
-            // Điều kiện dừng nảy
             if (distance <= 0.05f && velocityMag <= 0.5f) break;
 
             timer += Time.deltaTime;
@@ -209,14 +249,119 @@ public class RagdollDrag : MonoBehaviour
         }
 
         if (internalJoint != null) snapshot.Restore(internalJoint);
+
+        // Hồi phục lại cho PuppetMaster nếu có (để đảm bảo đồng bộ)
+        RagdollPuppetMaster pm = internalJoint.GetComponentInParent<RagdollPuppetMaster>();
+        if (pm != null && currentRb != null) pm.StiffenMuscle(currentRb);
+
         returnCoroutine = null;
         internalJoint = null;
         currentRb = null;
     }
 
+    public void ForceStopAndReturn()
+    {
+        if (isDraggingHead)
+        {
+            StopDraggingAndBounceHead();
+        }
+    }
+
+    public void ForceStopImmediate()
+    {
+        if (mouseJoint != null) Destroy(mouseJoint);
+        if (returnCoroutine != null) StopCoroutine(returnCoroutine);
+
+        isDraggingHead = false;
+        currentRb = null;
+        internalJoint = null;
+    }
+
     // ========================================================================
-    // LOGIC 2: KÉO TAY/CHÂN (LOGIC MỚI - KHÓA VỊ TRÍ, CHỈ XOAY)
+    // PHẦN LOGIC 2: XOAY TAY CHÂN (THÊM MỚI VÀO)
     // ========================================================================
+
+    void StartDraggingLimb(Rigidbody hitRb)
+    {
+        isDraggingLimb = true;
+        limbRb = hitRb;
+        limbJoint = hitRb.GetComponent<ConfigurableJoint>();
+
+        Debug.DrawRay(hitRb.position, hitRb.transform.TransformDirection(pointingAxis) * 2f, Color.yellow, 2f);
+
+        // Với tay chân, ta PHẢI dùng RelaxMuscle để không bị giật lại
+        puppetMaster = hitRb.GetComponentInParent<RagdollPuppetMaster>();
+        if (puppetMaster != null) puppetMaster.RelaxMuscle(limbRb);
+
+        if (limbJoint != null)
+        {
+            oldAngX = limbJoint.angularXMotion;
+            oldAngY = limbJoint.angularYMotion;
+            oldAngZ = limbJoint.angularZMotion;
+
+            capturedStartDirection = limbRb.transform.TransformDirection(pointingAxis);
+
+            limbJoint.xMotion = ConfigurableJointMotion.Locked;
+            limbJoint.yMotion = ConfigurableJointMotion.Locked;
+            limbJoint.zMotion = ConfigurableJointMotion.Locked;
+
+            limbJoint.angularXMotion = ConfigurableJointMotion.Free;
+            limbJoint.angularYMotion = ConfigurableJointMotion.Free;
+            limbJoint.angularZMotion = ConfigurableJointMotion.Free;
+
+            limbJoint.projectionMode = JointProjectionMode.PositionAndRotation;
+            limbJoint.enablePreprocessing = false;
+        }
+        limbRb.angularDamping = 10f;
+    }
+
+    void RotateLimbTowardsMouse()
+    {
+        Vector3 mousePos = Input.mousePosition;
+        mousePos.z = Vector3.Distance(m_cam.transform.position, limbRb.position);
+        Vector3 targetPos = m_cam.ScreenToWorldPoint(mousePos);
+        Vector3 directionToMouse = targetPos - limbRb.position;
+
+        Vector3 clampedDirection = Vector3.RotateTowards(capturedStartDirection, directionToMouse, maxAngle * Mathf.Deg2Rad, 0.0f);
+
+        Debug.DrawRay(limbRb.position, capturedStartDirection * 2, Color.white);
+        Debug.DrawRay(limbRb.position, clampedDirection * 2, Color.green);
+
+        Vector3 currentPointingDir = limbRb.transform.TransformDirection(pointingAxis);
+        Vector3 torqueDir = Vector3.Cross(currentPointingDir, clampedDirection).normalized;
+        float angleDiff = Vector3.Angle(currentPointingDir, clampedDirection);
+
+        float speed = (angleDiff < 1f) ? 0 : rotateSpeed;
+        Vector3 finalVelocity = torqueDir * speed * (angleDiff / 180f) * 50f;
+
+        if (rotateAxis == Vector3.forward) finalVelocity = new Vector3(0, 0, finalVelocity.z);
+        else if (rotateAxis == Vector3.up) finalVelocity = new Vector3(0, finalVelocity.y, 0);
+
+        limbRb.angularVelocity = finalVelocity;
+    }
+
+    void StopDraggingLimb()
+    {
+        if (limbJoint != null)
+        {
+            limbJoint.angularXMotion = oldAngX;
+            limbJoint.angularYMotion = oldAngY;
+            limbJoint.angularZMotion = oldAngZ;
+            limbJoint.projectionMode = JointProjectionMode.None;
+            limbJoint.enablePreprocessing = true;
+        }
+
+        if (puppetMaster != null && limbRb != null)
+        {
+            puppetMaster.StiffenMuscle(limbRb);
+        }
+
+        if (limbRb != null) limbRb.angularDamping = 0.05f;
+
+        isDraggingLimb = false;
+        limbRb = null;
+        limbJoint = null;
+    }
 }
 // Struct JointSnapshot giữ nguyên
 

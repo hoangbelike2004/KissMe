@@ -4,7 +4,10 @@ using System.Collections.Generic;
 
 public class ConfigurableRagdollBuilder : EditorWindow
 {
-    // Các biến để chứa xương (giống hệt Unity Ragdoll Wizard)
+    // --- Ô KÉO CHA TỔNG ---
+    public Transform characterRoot;
+
+    // --- CÁC BIẾN XƯƠNG ---
     public Transform pelvis;
 
     public Transform leftHips;
@@ -25,7 +28,8 @@ public class ConfigurableRagdollBuilder : EditorWindow
     public Transform head;
 
     public float totalMass = 20f;
-    public float strength = 0f; // Độ cứng của khớp (0 = lỏng như bún)
+    // Biến này giờ chỉ để tham khảo hoặc dùng cho Damper nếu cần, vì Spring đã set cứng 180
+    public float strength = 0f;
 
     [MenuItem("Tools/Configurable Ragdoll Builder")]
     public static void ShowWindow()
@@ -35,9 +39,13 @@ public class ConfigurableRagdollBuilder : EditorWindow
 
     void OnGUI()
     {
-        GUILayout.Label("Cấu hình Xương (Kéo thả từ Hierarchy)", EditorStyles.boldLabel);
+        GUILayout.Label("1. Cấu hình Chung", EditorStyles.boldLabel);
+        characterRoot = (Transform)EditorGUILayout.ObjectField("Character Root (Cha tổng)", characterRoot, typeof(Transform), true);
 
-        pelvis = (Transform)EditorGUILayout.ObjectField("Pelvis (Hông)", pelvis, typeof(Transform), true);
+        GUILayout.Space(10);
+        GUILayout.Label("2. Cấu hình Xương", EditorStyles.boldLabel);
+
+        pelvis = (Transform)EditorGUILayout.ObjectField("Pelvis (Hông - Gốc)", pelvis, typeof(Transform), true);
 
         GUILayout.Space(5);
         GUILayout.Label("Chân Trái", EditorStyles.boldLabel);
@@ -68,11 +76,11 @@ public class ConfigurableRagdollBuilder : EditorWindow
 
         GUILayout.Space(15);
         totalMass = EditorGUILayout.FloatField("Total Mass", totalMass);
-        strength = EditorGUILayout.FloatField("Joint Spring (Độ cứng)", strength);
+        strength = EditorGUILayout.FloatField("Joint Spring (Tham khảo)", strength);
 
         GUILayout.Space(20);
 
-        if (GUILayout.Button("TẠO RAGDOLL (CONFIGURABLE JOINT)", GUILayout.Height(40)))
+        if (GUILayout.Button("TẠO RAGDOLL (FULL AUTO)", GUILayout.Height(40)))
         {
             if (CheckConsistency())
             {
@@ -83,6 +91,8 @@ public class ConfigurableRagdollBuilder : EditorWindow
 
     bool CheckConsistency()
     {
+        if (!characterRoot && pelvis) characterRoot = pelvis.root;
+
         if (!pelvis || !leftHips || !leftKnee || !leftFoot || !rightHips || !rightKnee || !rightFoot ||
             !leftArm || !leftElbow || !rightArm || !rightElbow || !middleSpine || !head)
         {
@@ -96,95 +106,207 @@ public class ConfigurableRagdollBuilder : EditorWindow
     {
         Cleanup(pelvis);
 
-        // 1. Setup Pelvis (Gốc)
+        // 1. Setup Xương
         BuildBone(pelvis, null, new Transform[] { leftHips, rightHips, middleSpine }, false);
 
-        // 2. Setup Chân
         BuildBone(leftHips, pelvis, new Transform[] { leftKnee }, true);
         BuildBone(leftKnee, leftHips, new Transform[] { leftFoot }, true);
-        BuildBone(leftFoot, leftKnee, null, true);
+        BuildBone(leftFoot, leftKnee, null, true, true); // Chân: isFoot = true
 
         BuildBone(rightHips, pelvis, new Transform[] { rightKnee }, true);
         BuildBone(rightKnee, rightHips, new Transform[] { rightFoot }, true);
-        BuildBone(rightFoot, rightKnee, null, true);
+        BuildBone(rightFoot, rightKnee, null, true, true); // Chân: isFoot = true
 
-        // 3. Setup Thân
         BuildBone(middleSpine, pelvis, new Transform[] { leftArm, rightArm, head }, false);
         BuildBone(head, middleSpine, null, false);
 
-        // 4. Setup Tay
         BuildBone(leftArm, middleSpine, new Transform[] { leftElbow }, true);
         BuildBone(leftElbow, leftArm, null, true);
 
         BuildBone(rightArm, middleSpine, new Transform[] { rightElbow }, true);
         BuildBone(rightElbow, rightArm, null, true);
 
-        Debug.Log("Đã tạo Ragdoll với Configurable Joint thành công!");
+        // --- XỬ LÝ ROOT (CHA TỔNG) ---
+        if (characterRoot != null)
+        {
+            Animator existingAnim = characterRoot.GetComponent<Animator>();
+            if (existingAnim != null)
+            {
+                DestroyImmediate(existingAnim);
+                Debug.Log("🗑️ Đã xóa Animator trên Character Root.");
+            }
+
+            if (characterRoot.GetComponent<RagdollPuppetMaster>() == null)
+            {
+                characterRoot.gameObject.AddComponent<RagdollPuppetMaster>();
+                Debug.Log($"✅ Đã thêm RagdollPuppetMaster vào: {characterRoot.name}");
+            }
+        }
+
+        // 3. GẮN SCRIPT HeadGameplay VÀO ĐẦU
+        if (head != null)
+        {
+            if (head.GetComponent<HeadGameplay>() == null)
+            {
+                HeadGameplay hg = head.gameObject.AddComponent<HeadGameplay>();
+                hg.isSpecial = true;
+                Debug.Log($"✅ Đã thêm HeadGameplay vào: {head.name}");
+            }
+        }
+
+        Debug.Log("🎉 Đã tạo Ragdoll thành công! (Pelvis Collider Fixed, All Spring=180, MiddleSpine RB Configured)");
     }
 
-    void BuildBone(Transform bone, Transform parent, Transform[] children, bool isLimb)
+    void BuildBone(Transform bone, Transform parent, Transform[] children, bool isLimb, bool isFoot = false)
     {
-        // Thêm Rigidbody
+        // Tag
+        SetupTag(bone);
+
+        // Rigidbody
         Rigidbody rb = bone.GetComponent<Rigidbody>();
         if (!rb) rb = bone.gameObject.AddComponent<Rigidbody>();
-        rb.mass = totalMass / 15f; // Chia đều khối lượng tạm thời
 
-        // Thêm Collider (Tính toán chiều dài dựa trên con)
-        CapsuleCollider collider = bone.GetComponent<CapsuleCollider>();
-        if (!collider) collider = bone.gameObject.AddComponent<CapsuleCollider>();
+        // Cấu hình Rigidbody đặc biệt cho Middle Spine
+        if (bone == middleSpine)
+        {
+            rb.isKinematic = true; //
+            rb.interpolation = RigidbodyInterpolation.Interpolate; //
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous; //
+            rb.mass = totalMass / 15f;
+        }
+        else
+        {
+            rb.mass = totalMass / 15f;
+            // Reset về mặc định nếu không phải Middle Spine (để tránh lỗi nếu chạy tool nhiều lần)
+            rb.isKinematic = false;
+            rb.interpolation = RigidbodyInterpolation.None;
+            rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        }
 
-        CalculateCapsuleLogic(bone, children, collider);
+        // Freeze Rotation cho Chân
+        if (isFoot)
+        {
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
+        }
+        else
+        {
+            // Chỉ reset constraints nếu không phải là chân để tránh conflict
+            if (bone != middleSpine) // middleSpine có thể cần constraints khác tuỳ game, ở đây giữ nguyên logic cũ
+                rb.constraints = RigidbodyConstraints.None;
+        }
 
-        // Nếu có cha -> Tạo Joint nối với cha
+        // --- COLLIDER LOGIC ---
+        if (bone == head)
+        {
+            // HEAD
+            CapsuleCollider existingCap = bone.GetComponent<CapsuleCollider>();
+            if (existingCap) DestroyImmediate(existingCap);
+
+            SphereCollider sphere = bone.GetComponent<SphereCollider>();
+            if (!sphere) sphere = bone.gameObject.AddComponent<SphereCollider>();
+            sphere.center = new Vector3(0, 0.1f, 0);
+            sphere.radius = 0.1f;
+        }
+        else
+        {
+            // OTHERS: CAPSULE
+            SphereCollider existingSphere = bone.GetComponent<SphereCollider>();
+            if (existingSphere) DestroyImmediate(existingSphere);
+
+            CapsuleCollider collider = bone.GetComponent<CapsuleCollider>();
+            if (!collider) collider = bone.gameObject.AddComponent<CapsuleCollider>();
+
+            // --- KIỂM TRA TỪNG LOẠI XƯƠNG ---
+            if (bone == pelvis)
+            {
+                // [CASE 0] PELVIS (HÔNG GỐC) - Cập nhật theo yêu cầu
+                collider.center = new Vector3(0f, 0.02f, 0f);
+                collider.radius = 0.05f;
+                collider.height = 0.2f;
+                // Pelvis thường nằm ngang hoặc dọc tuỳ rig, giữ nguyên logic hoặc set Y-Axis nếu cần. 
+                // Ảnh không hiện rõ direction cho pelvis, nhưng thường là X hoặc Y. 
+                // Ở đây set theo Y-Axis (1) cho đồng bộ với các limbs khác nếu muốn, hoặc giữ nguyên tính toán.
+                // Tuy nhiên trong code trước tôi đã set Direction = 1 (Y-Axis) cho Pelvis case.
+                collider.direction = 1;
+            }
+            else if (bone == leftFoot || bone == rightFoot)
+            {
+                // [CASE 1] FOOT
+                collider.center = new Vector3(0f, 0.09f, 0f);
+                collider.radius = 0.03f;
+                collider.height = 0.1f;
+                collider.direction = 1; // Y-Axis
+            }
+            else if (bone == leftElbow || bone == rightElbow)
+            {
+                // [CASE 2] ELBOW
+                collider.center = new Vector3(0f, 0.12f, 0f);
+                collider.radius = 0.05f;
+                collider.height = 0.2f;
+                collider.direction = 1; // Y-Axis
+            }
+            else
+            {
+                // [CASE 3] AUTO CALC
+                CalculateCapsuleLogic(bone, children, collider);
+            }
+        }
+
+        // Joint
         if (parent != null)
         {
             ConfigurableJoint joint = bone.GetComponent<ConfigurableJoint>();
             if (!joint) joint = bone.gameObject.AddComponent<ConfigurableJoint>();
 
             joint.connectedBody = parent.GetComponent<Rigidbody>();
-
-            // Cấu hình Configurable Joint cơ bản cho Ragdoll
-            SetupJointSettings(joint);
+            SetupJointSettings(joint, isFoot);
         }
     }
 
-    void SetupJointSettings(ConfigurableJoint joint)
+    void SetupTag(Transform bone)
     {
-        // Khóa vị trí (quan trọng để không bị rời xương)
+        if (bone == head) bone.tag = "Head";
+        else if (!bone.CompareTag("Head")) bone.tag = "Untagged";
+    }
+
+    void SetupJointSettings(ConfigurableJoint joint, bool isFoot)
+    {
+        // 1. Khóa vị trí (Luôn Locked)
         joint.xMotion = ConfigurableJointMotion.Locked;
         joint.yMotion = ConfigurableJointMotion.Locked;
         joint.zMotion = ConfigurableJointMotion.Locked;
 
-        // Giới hạn xoay
-        joint.angularXMotion = ConfigurableJointMotion.Limited;
-        joint.angularYMotion = ConfigurableJointMotion.Limited;
-        joint.angularZMotion = ConfigurableJointMotion.Limited;
+        // 2. KHÓA XOAY TOÀN BỘ (Angular Motion = Locked)
+        joint.angularXMotion = ConfigurableJointMotion.Locked;
+        joint.angularYMotion = ConfigurableJointMotion.Locked;
+        joint.angularZMotion = ConfigurableJointMotion.Locked;
 
-        // Set giới hạn góc mặc định (để không bị cứng đờ)
+        // 3. Projection Mode
+        joint.projectionMode = JointProjectionMode.PositionAndRotation;
+        joint.projectionDistance = 0.1f;
+        joint.projectionAngle = 180f;
+
+        // 4. Giới hạn góc
         SoftJointLimit limit = new SoftJointLimit();
-        limit.limit = 45f; // Góc xoay cho phép
+        limit.limit = 45f;
         joint.lowAngularXLimit = new SoftJointLimit() { limit = -45f };
         joint.highAngularXLimit = limit;
         joint.angularYLimit = limit;
         joint.angularZLimit = limit;
 
-        // Cài đặt Spring (Độ nảy/cứng)
+        // 5. SPRING DRIVE = 180 (CHO TẤT CẢ CÁC KHỚP)
         JointDrive drive = new JointDrive();
-        drive.positionSpring = strength;
-        drive.positionDamper = 1f;
+        drive.positionSpring = 180f; // Cố định 180
+        drive.positionDamper = 0f;   // Cố định 0
         drive.maximumForce = float.MaxValue;
 
-        if (strength > 0)
-        {
-            joint.angularXDrive = drive;
-            joint.angularYZDrive = drive;
-        }
+        // Áp dụng Drive cho Angular X và YZ
+        joint.angularXDrive = drive;
+        joint.angularYZDrive = drive;
     }
 
     void CalculateCapsuleLogic(Transform bone, Transform[] children, CapsuleCollider collider)
     {
-        // Logic đơn giản để tính hướng và chiều cao của Collider
-        // Dựa trên vị trí của xương con đầu tiên tìm thấy
         if (children != null && children.Length > 0)
         {
             Transform child = children[0];
@@ -194,29 +316,23 @@ public class ConfigurableRagdollBuilder : EditorWindow
             collider.height = length;
             collider.center = bone.InverseTransformPoint(bone.position + direction * 0.5f);
 
-            // Xác định trục (X, Y hay Z) dựa trên hướng xương
             Vector3 localDir = bone.InverseTransformDirection(direction);
             if (Mathf.Abs(localDir.x) > Mathf.Abs(localDir.y) && Mathf.Abs(localDir.x) > Mathf.Abs(localDir.z))
-                collider.direction = 0; // X-Axis
+                collider.direction = 0;
             else if (Mathf.Abs(localDir.y) > Mathf.Abs(localDir.x) && Mathf.Abs(localDir.y) > Mathf.Abs(localDir.z))
-                collider.direction = 1; // Y-Axis
+                collider.direction = 1;
             else
-                collider.direction = 2; // Z-Axis
+                collider.direction = 2;
 
-            collider.radius = length * 0.2f; // Bán kính ước lượng
+            collider.radius = length * 0.2f;
         }
         else
         {
-            // Nếu không có con (ví dụ bàn tay/bàn chân), tạo collider mặc định nhỏ
             collider.height = 0.2f;
             collider.radius = 0.05f;
             collider.center = Vector3.zero;
         }
     }
 
-    void Cleanup(Transform root)
-    {
-        // Hàm dọn dẹp các component vật lý cũ nếu muốn làm lại (tùy chọn)
-        // Hiện tại để an toàn tôi không tự xóa để tránh mất dữ liệu khác của bạn
-    }
+    void Cleanup(Transform root) { }
 }
