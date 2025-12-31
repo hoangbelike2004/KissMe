@@ -3,15 +3,15 @@ using UnityEngine;
 
 public class Level : MonoBehaviour
 {
-    private List<HeadGameplay> heads = new List<HeadGameplay>();
+    private List<Winzone> heads = new List<Winzone>();
 
-    public void AddHead(HeadGameplay head)
+    public void AddHead(Winzone head)
     {
         if (heads.Contains(head)) return;
         heads.Add(head);
     }
 
-    public void RemoveHead(HeadGameplay head)
+    public void RemoveHead(Winzone head)
     {
         if (heads.Contains(head))
         {

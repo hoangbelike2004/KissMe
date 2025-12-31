@@ -58,9 +58,12 @@ public class RagdollDrag : MonoBehaviour
 
     private Camera m_cam;
 
+    private CameraFollow m_cameraFollow;
+
     private void Start()
     {
         m_cam = Camera.main;
+        m_cameraFollow = GetComponent<CameraFollow>();
     }
 
     void Update()
@@ -116,6 +119,10 @@ public class RagdollDrag : MonoBehaviour
         {
             RotateLimbTowardsMouse();
         }
+    }
+    void LateUpdate()
+    {
+        m_cameraFollow.UpdateCam();
     }
 
     // ========================================================================
@@ -361,6 +368,13 @@ public class RagdollDrag : MonoBehaviour
         isDraggingLimb = false;
         limbRb = null;
         limbJoint = null;
+    }
+
+
+    //kiem tra xem thang nay co phai la thang dang duoc keo hay khong
+    public bool IsDraggingHead(Rigidbody rb)
+    {
+        return currentRb == rb && isDraggingHead;
     }
 }
 // Struct JointSnapshot giữ nguyên
