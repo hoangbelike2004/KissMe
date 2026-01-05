@@ -23,10 +23,12 @@ public class DragProp : MonoBehaviour, IDrag
     private float oldDrag;
     private float oldAngularDrag;
     private RigidbodyInterpolation oldInterpolation;
+    private CameraFollow m_cameraFollow;
 
-    void Start()
+    private void Start()
     {
         m_cam = Camera.main;
+        m_cameraFollow = GetComponent<CameraFollow>();
     }
 
     void Update()
@@ -42,7 +44,10 @@ public class DragProp : MonoBehaviour, IDrag
         // (Nếu Controller của bạn đã gọi dragHandlers[i].OnDrag() trong FixedUpdate của nó rồi thì bạn có thể xóa dòng này)
         OnDrag();
     }
-
+    void LateUpdate()
+    {
+        if (m_cameraFollow != null) m_cameraFollow.UpdateCam();
+    }
     // --- LOGIC VẬT LÝ CHÍNH NẰM Ở ĐÂY ---
     public void OnDrag()
     {

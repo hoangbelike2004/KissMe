@@ -38,11 +38,11 @@ public class DragController : MonoBehaviour
     }
     void OnEnable()
     {
-
+        Observer.OnSetDragType += SetState;
     }
 
     void OnDisable()
     {
-
+        Observer.OnSetDragType -= SetState;
     }
 }

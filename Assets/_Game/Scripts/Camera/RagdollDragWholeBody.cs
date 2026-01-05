@@ -42,9 +42,12 @@ public class RagdollDragBodyOnly : MonoBehaviour, IDrag
 
     private RagdollPuppetMaster puppetMaster;
 
-    void Start()
+    private CameraFollow m_cameraFollow;
+
+    private void Start()
     {
         m_cam = Camera.main;
+        m_cameraFollow = GetComponent<CameraFollow>();
     }
 
     void Update()
@@ -61,6 +64,10 @@ public class RagdollDragBodyOnly : MonoBehaviour, IDrag
     void FixedUpdate()
     {
         OnDrag();
+    }
+    void LateUpdate()
+    {
+        if (m_cameraFollow != null) m_cameraFollow.UpdateCam();
     }
     public void OnDrag()
     {
