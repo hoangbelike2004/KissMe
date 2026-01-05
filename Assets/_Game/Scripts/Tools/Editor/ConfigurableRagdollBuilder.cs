@@ -28,7 +28,6 @@ public class ConfigurableRagdollBuilder : EditorWindow
     public Transform head;
 
     public float totalMass = 20f;
-    // Biến này giờ chỉ để tham khảo hoặc dùng cho Damper nếu cần, vì Spring đã set cứng 180
     public float strength = 0f;
 
     [MenuItem("Tools/Configurable Ragdoll Builder")]
@@ -111,11 +110,11 @@ public class ConfigurableRagdollBuilder : EditorWindow
 
         BuildBone(leftHips, pelvis, new Transform[] { leftKnee }, true);
         BuildBone(leftKnee, leftHips, new Transform[] { leftFoot }, true);
-        BuildBone(leftFoot, leftKnee, null, true, true); // Chân: isFoot = true
+        BuildBone(leftFoot, leftKnee, null, true, true);
 
         BuildBone(rightHips, pelvis, new Transform[] { rightKnee }, true);
         BuildBone(rightKnee, rightHips, new Transform[] { rightFoot }, true);
-        BuildBone(rightFoot, rightKnee, null, true, true); // Chân: isFoot = true
+        BuildBone(rightFoot, rightKnee, null, true, true);
 
         BuildBone(middleSpine, pelvis, new Transform[] { leftArm, rightArm, head }, false);
         BuildBone(head, middleSpine, null, false);
@@ -126,7 +125,7 @@ public class ConfigurableRagdollBuilder : EditorWindow
         BuildBone(rightArm, middleSpine, new Transform[] { rightElbow }, true);
         BuildBone(rightElbow, rightArm, null, true);
 
-        // --- XỬ LÝ ROOT (CHA TỔNG) ---
+        // --- XỬ LÝ ROOT ---
         if (characterRoot != null)
         {
             Animator existingAnim = characterRoot.GetComponent<Animator>();
@@ -154,44 +153,40 @@ public class ConfigurableRagdollBuilder : EditorWindow
             }
         }
 
-        Debug.Log("🎉 Đã tạo Ragdoll thành công! (Pelvis Collider Fixed, All Spring=180, MiddleSpine RB Configured)");
+        Debug.Log("🎉 Đã tạo Ragdoll thành công! (Middle Spine Configured exactly as image)");
     }
 
     void BuildBone(Transform bone, Transform parent, Transform[] children, bool isLimb, bool isFoot = false)
     {
-        // Tag
+        // Tag (Đã cập nhật logic tag ở hàm SetupTag bên dưới)
         SetupTag(bone);
 
         // Rigidbody
         Rigidbody rb = bone.GetComponent<Rigidbody>();
         if (!rb) rb = bone.gameObject.AddComponent<Rigidbody>();
 
-        // Cấu hình Rigidbody đặc biệt cho Middle Spine
         if (bone == middleSpine)
         {
-            rb.isKinematic = true; //
-            rb.interpolation = RigidbodyInterpolation.Interpolate; //
-            rb.collisionDetectionMode = CollisionDetectionMode.Continuous; //
+            rb.isKinematic = true;
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
             rb.mass = totalMass / 15f;
         }
         else
         {
             rb.mass = totalMass / 15f;
-            // Reset về mặc định nếu không phải Middle Spine (để tránh lỗi nếu chạy tool nhiều lần)
             rb.isKinematic = false;
             rb.interpolation = RigidbodyInterpolation.None;
             rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
         }
 
-        // Freeze Rotation cho Chân
         if (isFoot)
         {
             rb.constraints = RigidbodyConstraints.FreezeRotation;
         }
         else
         {
-            // Chỉ reset constraints nếu không phải là chân để tránh conflict
-            if (bone != middleSpine) // middleSpine có thể cần constraints khác tuỳ game, ở đây giữ nguyên logic cũ
+            if (bone != middleSpine)
                 rb.constraints = RigidbodyConstraints.None;
         }
 
@@ -216,17 +211,12 @@ public class ConfigurableRagdollBuilder : EditorWindow
             CapsuleCollider collider = bone.GetComponent<CapsuleCollider>();
             if (!collider) collider = bone.gameObject.AddComponent<CapsuleCollider>();
 
-            // --- KIỂM TRA TỪNG LOẠI XƯƠNG ---
             if (bone == pelvis)
             {
-                // [CASE 0] PELVIS (HÔNG GỐC) - Cập nhật theo yêu cầu
+                // [CASE 0] PELVIS
                 collider.center = new Vector3(0f, 0.02f, 0f);
                 collider.radius = 0.05f;
                 collider.height = 0.2f;
-                // Pelvis thường nằm ngang hoặc dọc tuỳ rig, giữ nguyên logic hoặc set Y-Axis nếu cần. 
-                // Ảnh không hiện rõ direction cho pelvis, nhưng thường là X hoặc Y. 
-                // Ở đây set theo Y-Axis (1) cho đồng bộ với các limbs khác nếu muốn, hoặc giữ nguyên tính toán.
-                // Tuy nhiên trong code trước tôi đã set Direction = 1 (Y-Axis) cho Pelvis case.
                 collider.direction = 1;
             }
             else if (bone == leftFoot || bone == rightFoot)
@@ -235,7 +225,7 @@ public class ConfigurableRagdollBuilder : EditorWindow
                 collider.center = new Vector3(0f, 0.09f, 0f);
                 collider.radius = 0.03f;
                 collider.height = 0.1f;
-                collider.direction = 1; // Y-Axis
+                collider.direction = 1;
             }
             else if (bone == leftElbow || bone == rightElbow)
             {
@@ -243,7 +233,19 @@ public class ConfigurableRagdollBuilder : EditorWindow
                 collider.center = new Vector3(0f, 0.12f, 0f);
                 collider.radius = 0.05f;
                 collider.height = 0.2f;
-                collider.direction = 1; // Y-Axis
+                collider.direction = 1;
+            }
+            else if (bone == middleSpine)
+            {
+                // [CASE MỚI] MIDDLE SPINE (Theo ảnh cấu hình bạn gửi)
+                // Center: X=0, Y=0.07, Z=0
+                collider.center = new Vector3(0f, 0.07f, 0f);
+                // Radius: 0.075
+                collider.radius = 0.075f;
+                // Height: 0.35
+                collider.height = 0.35f;
+                // Direction: 1 (Y-Axis) là chuẩn cho spine đứng
+                collider.direction = 1;
             }
             else
             {
@@ -265,28 +267,41 @@ public class ConfigurableRagdollBuilder : EditorWindow
 
     void SetupTag(Transform bone)
     {
-        if (bone == head) bone.tag = "Head";
-        else if (!bone.CompareTag("Head")) bone.tag = "Untagged";
+        if (bone == head)
+        {
+            bone.tag = "Head";
+        }
+        else if (bone == middleSpine)
+        {
+            // [CẬP NHẬT] Set tag BodyPart cho Middle Spine
+            bone.tag = "BodyPart";
+        }
+        else
+        {
+            // Chỉ set Untagged nếu chưa có Tag quan trọng
+            if (!bone.CompareTag("Head") && !bone.CompareTag("BodyPart"))
+                bone.tag = "Untagged";
+        }
     }
 
     void SetupJointSettings(ConfigurableJoint joint, bool isFoot)
     {
-        // 1. Khóa vị trí (Luôn Locked)
+        // 1. Khóa vị trí
         joint.xMotion = ConfigurableJointMotion.Locked;
         joint.yMotion = ConfigurableJointMotion.Locked;
         joint.zMotion = ConfigurableJointMotion.Locked;
 
-        // 2. KHÓA XOAY TOÀN BỘ (Angular Motion = Locked)
+        // 2. KHÓA XOAY
         joint.angularXMotion = ConfigurableJointMotion.Locked;
         joint.angularYMotion = ConfigurableJointMotion.Locked;
         joint.angularZMotion = ConfigurableJointMotion.Locked;
 
-        // 3. Projection Mode
+        // 3. Projection
         joint.projectionMode = JointProjectionMode.PositionAndRotation;
         joint.projectionDistance = 0.1f;
         joint.projectionAngle = 180f;
 
-        // 4. Giới hạn góc
+        // 4. Limits
         SoftJointLimit limit = new SoftJointLimit();
         limit.limit = 45f;
         joint.lowAngularXLimit = new SoftJointLimit() { limit = -45f };
@@ -294,13 +309,12 @@ public class ConfigurableRagdollBuilder : EditorWindow
         joint.angularYLimit = limit;
         joint.angularZLimit = limit;
 
-        // 5. SPRING DRIVE = 180 (CHO TẤT CẢ CÁC KHỚP)
+        // 5. SPRING DRIVE = 180
         JointDrive drive = new JointDrive();
-        drive.positionSpring = 180f; // Cố định 180
-        drive.positionDamper = 0f;   // Cố định 0
+        drive.positionSpring = 180f;
+        drive.positionDamper = 0f;
         drive.maximumForce = float.MaxValue;
 
-        // Áp dụng Drive cho Angular X và YZ
         joint.angularXDrive = drive;
         joint.angularYZDrive = drive;
     }

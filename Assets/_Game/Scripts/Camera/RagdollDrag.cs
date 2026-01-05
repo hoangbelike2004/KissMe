@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic; // Cần thư viện này để dùng Dictionary
 
-public class RagdollDrag : MonoBehaviour
+public class RagdollDrag : MonoBehaviour, IDrag
 {
     // ========================================================================
     // 1. CẤU HÌNH CHUNG
@@ -10,8 +11,9 @@ public class RagdollDrag : MonoBehaviour
     public string stretchableTag = "Head"; // Tag để Kéo đầu
     public string limbTag = "Untagged";    // Tag để Xoay tay/chân
 
+    public DragType DragType => DragType.Limb;
     // ========================================================================
-    // 2. BIẾN & CẤU HÌNH CỦA SCRIPT GỐC (KÉO ĐẦU)
+    // 2. CẤU HÌNH KÉO ĐẦU (HEAD)
     // ========================================================================
     [Header("--- KÉO ĐẦU (HEAD) ---")]
     [Header("Lực kéo chuột (Mouse Joint)")]
@@ -22,24 +24,28 @@ public class RagdollDrag : MonoBehaviour
     public float returnSpring = 2000f;
     public float returnDamper = 50f;
 
-    private bool isDraggingHead; // Đổi tên nhẹ để phân biệt với Limb
+    // --- [QUAN TRỌNG] DICTIONARY LƯU SNAPSHOT ---
+    // Key: Joint của cái đầu, Value: Dữ liệu snapshot GỐC của đầu đó
+    private Dictionary<ConfigurableJoint, JointSnapshot> headSnapshots = new Dictionary<ConfigurableJoint, JointSnapshot>();
+
+    // Biến Runtime
+    private bool isDraggingHead;
     private float distToCamera;
 
-    private ConfigurableJoint internalJoint;
+    private ConfigurableJoint currentInternalJoint; // Joint đang bị kéo hiện tại
     private SpringJoint mouseJoint;
-
     private Rigidbody currentRb;
-    private JointSnapshot snapshot;
-    private Vector3 initialRelativePos;
-    private Coroutine returnCoroutine;
-    private Vector3 currentMouseWorldPos;
 
+    private Vector3 currentMouseWorldPos;
+    private Vector3 initialRelativePos; // Lưu vị trí tương đối để check khoảng cách về đích
+
+    // Lưu trạng thái Rigidbody tạm thời
     private float originalDrag;
     private float originalAngularDrag;
     private bool originalUseGravity;
 
     // ========================================================================
-    // 3. BIẾN & CẤU HÌNH CỦA SCRIPT XOAY (LIMB)
+    // 3. CẤU HÌNH XOAY TAY CHÂN (LIMB)
     // ========================================================================
     [Header("--- XOAY TAY CHÂN (LIMB) ---")]
     public float rotateSpeed = 10f;
@@ -57,7 +63,6 @@ public class RagdollDrag : MonoBehaviour
     private Vector3 capturedStartDirection;
 
     private Camera m_cam;
-
     private CameraFollow m_cameraFollow;
 
     private void Start()
@@ -76,12 +81,12 @@ public class RagdollDrag : MonoBehaviour
             {
                 if (hit.rigidbody != null && hit.collider != null)
                 {
-                    // A. NẾU LÀ ĐẦU -> CHẠY LOGIC GỐC CỦA BẠN
+                    // A. KÉO ĐẦU
                     if (hit.collider.CompareTag(stretchableTag))
                     {
                         StartDraggingHead(hit.rigidbody, hit.point);
                     }
-                    // B. NẾU LÀ TAY/CHÂN -> CHẠY LOGIC XOAY
+                    // B. XOAY TAY CHÂN
                     else if (hit.collider.CompareTag(limbTag))
                     {
                         StartDraggingLimb(hit.rigidbody);
@@ -97,7 +102,7 @@ public class RagdollDrag : MonoBehaviour
             if (isDraggingLimb) StopDraggingLimb();
         }
 
-        // 3. TÍNH TOÁN VỊ TRÍ CHUỘT (Cho Head)
+        // 3. TÍNH VỊ TRÍ CHUỘT
         if (isDraggingHead)
         {
             Vector3 mousePos = Input.mousePosition;
@@ -108,68 +113,77 @@ public class RagdollDrag : MonoBehaviour
 
     public void FixedUpdate()
     {
-        // LOGIC KÉO ĐẦU (Giữ nguyên)
+        OnDrag();
+    }
+    public void OnDrag()
+    {
+        // Logic Kéo Đầu
         if (isDraggingHead && mouseJoint != null)
         {
             mouseJoint.connectedAnchor = currentMouseWorldPos;
         }
 
-        // LOGIC XOAY TAY (Mới thêm)
+        // Logic Xoay Tay
         if (isDraggingLimb && limbRb != null)
         {
             RotateLimbTowardsMouse();
         }
     }
+
     void LateUpdate()
     {
-        m_cameraFollow.UpdateCam();
+        if (m_cameraFollow != null) m_cameraFollow.UpdateCam();
     }
 
     // ========================================================================
-    // PHẦN LOGIC 1: KÉO ĐẦU (COPY Y NGUYÊN TỪ SCRIPT GỐC CỦA BẠN)
+    // PHẦN 1: LOGIC KÉO ĐẦU (ĐÃ SỬA: SNAPSHOT MẶC ĐỊNH & PARAMETER)
     // ========================================================================
 
     public void StartDraggingHead(Rigidbody hitRb, Vector3 hitPoint)
     {
-        if (returnCoroutine != null) StopCoroutine(returnCoroutine);
-
         currentRb = hitRb;
+        currentInternalJoint = hitRb.GetComponent<ConfigurableJoint>();
 
         Vector3 screenPos = m_cam.WorldToScreenPoint(hitPoint);
         distToCamera = screenPos.z;
 
-        // --- A. XỬ LÝ JOINT NỘI TẠI ---
-        internalJoint = hitRb.GetComponent<ConfigurableJoint>();
-        if (internalJoint != null)
+        // --- A. XỬ LÝ JOINT VÀ SNAPSHOT ---
+        if (currentInternalJoint != null)
         {
-            snapshot.Capture(internalJoint);
+            // [QUAN TRỌNG] Chỉ lưu Snapshot NẾU CHƯA CÓ
+            // Điều này đảm bảo ta luôn giữ cấu hình gốc ban đầu, không bao giờ bị ghi đè bởi trạng thái lỗi
+            if (!headSnapshots.ContainsKey(currentInternalJoint))
+            {
+                JointSnapshot tempSnap = new JointSnapshot();
+                tempSnap.Capture(currentInternalJoint);
+                headSnapshots.Add(currentInternalJoint, tempSnap);
+            }
 
-            // Thả lỏng hoàn toàn
-            internalJoint.xMotion = ConfigurableJointMotion.Free;
-            internalJoint.yMotion = ConfigurableJointMotion.Free;
-            internalJoint.zMotion = ConfigurableJointMotion.Free;
-            internalJoint.angularXMotion = ConfigurableJointMotion.Free;
-            internalJoint.angularYMotion = ConfigurableJointMotion.Free;
-            internalJoint.angularZMotion = ConfigurableJointMotion.Free;
+            // Phá vỡ cấu hình để kéo (Thả lỏng hoàn toàn)
+            currentInternalJoint.xMotion = ConfigurableJointMotion.Free;
+            currentInternalJoint.yMotion = ConfigurableJointMotion.Free;
+            currentInternalJoint.zMotion = ConfigurableJointMotion.Free;
+            currentInternalJoint.angularXMotion = ConfigurableJointMotion.Free;
+            currentInternalJoint.angularYMotion = ConfigurableJointMotion.Free;
+            currentInternalJoint.angularZMotion = ConfigurableJointMotion.Free;
 
             JointDrive zeroDrive = new JointDrive { positionSpring = 0, positionDamper = 0 };
-            internalJoint.xDrive = zeroDrive;
-            internalJoint.yDrive = zeroDrive;
-            internalJoint.zDrive = zeroDrive;
+            currentInternalJoint.xDrive = zeroDrive;
+            currentInternalJoint.yDrive = zeroDrive;
+            currentInternalJoint.zDrive = zeroDrive;
         }
 
-        // --- B. LƯU & CHỈNH SỬA RIGIDBODY ---
+        // --- B. CẤU HÌNH RIGIDBODY ---
         originalDrag = hitRb.linearDamping;
         originalAngularDrag = hitRb.angularDamping;
         originalUseGravity = hitRb.useGravity;
 
-        hitRb.linearDamping = 10f; // TĂNG LÊN 10 -> Đây là lý do nó không bị xoay!
+        hitRb.linearDamping = 10f;
         hitRb.angularDamping = 10f;
         hitRb.useGravity = false;
-
         hitRb.interpolation = RigidbodyInterpolation.Interpolate;
 
-        // --- C. TẠO DÂY THỪNG ẢO ---
+        // --- C. TẠO SPRING JOINT (MOUSE) ---
         mouseJoint = hitRb.gameObject.AddComponent<SpringJoint>();
         mouseJoint.autoConfigureConnectedAnchor = false;
         mouseJoint.anchor = hitRb.transform.InverseTransformPoint(hitPoint);
@@ -183,8 +197,9 @@ public class RagdollDrag : MonoBehaviour
         mouseJoint.damper = dragDamper * 5;
         mouseJoint.maxDistance = 0f;
 
-        if (internalJoint != null && internalJoint.connectedBody != null)
-            initialRelativePos = internalJoint.connectedBody.transform.InverseTransformPoint(hitRb.position);
+        // Lưu vị trí tương đối để check hồi phục
+        if (currentInternalJoint != null && currentInternalJoint.connectedBody != null)
+            initialRelativePos = currentInternalJoint.connectedBody.transform.InverseTransformPoint(hitRb.position);
         else
             initialRelativePos = hitRb.position;
 
@@ -195,6 +210,7 @@ public class RagdollDrag : MonoBehaviour
     {
         if (mouseJoint != null) Destroy(mouseJoint);
 
+        // Khôi phục Rigidbody ngay lập tức
         if (currentRb != null)
         {
             currentRb.useGravity = originalUseGravity;
@@ -202,23 +218,38 @@ public class RagdollDrag : MonoBehaviour
             currentRb.angularDamping = originalAngularDrag;
         }
 
-        if (internalJoint != null && isDraggingHead)
+        if (currentInternalJoint != null && isDraggingHead)
         {
-            isDraggingHead = false;
-            returnCoroutine = StartCoroutine(DoReturnPhysicsHead());
+            // [QUAN TRỌNG] Truyền tham số cụ thể vào Coroutine
+            StartCoroutine(DoReturnPhysicsHead(currentInternalJoint, currentRb, initialRelativePos));
         }
-        else
-        {
-            isDraggingHead = false;
-            currentRb = null; // Reset nếu không có Joint
-        }
+
+        // Reset biến toàn cục
+        isDraggingHead = false;
+        currentRb = null;
+        currentInternalJoint = null;
     }
 
-    IEnumerator DoReturnPhysicsHead()
+    // Coroutine nhận tham số riêng biệt, sử dụng Snapshot từ Dictionary
+    IEnumerator DoReturnPhysicsHead(ConfigurableJoint jointToReturn, Rigidbody rbToReturn, Vector3 initialPos)
     {
-        internalJoint.targetPosition = Vector3.zero;
-        internalJoint.targetRotation = Quaternion.identity;
+        // Lấy snapshot gốc từ Dictionary
+        if (!headSnapshots.ContainsKey(jointToReturn)) yield break;
+        JointSnapshot mySnapshot = headSnapshots[jointToReturn];
 
+        // 1. Tắt trọng lực và vận tốc để bay về thẳng (không bị nặng kéo xuống)
+        if (rbToReturn != null)
+        {
+            rbToReturn.useGravity = false;
+            rbToReturn.linearVelocity = Vector3.zero;
+            rbToReturn.angularVelocity = Vector3.zero;
+        }
+
+        // 2. Set Target từ Snapshot gốc (Chống thụt cổ)
+        jointToReturn.targetPosition = mySnapshot.targetPosition;
+        jointToReturn.targetRotation = mySnapshot.targetRotation;
+
+        // 3. Tạo lực hồi phục
         JointDrive returnDrive = new JointDrive
         {
             positionSpring = returnSpring,
@@ -226,44 +257,69 @@ public class RagdollDrag : MonoBehaviour
             maximumForce = float.MaxValue
         };
 
-        internalJoint.xDrive = returnDrive;
-        internalJoint.yDrive = returnDrive;
-        internalJoint.zDrive = returnDrive;
+        // Áp dụng lực Vị trí (Kéo về)
+        jointToReturn.xDrive = returnDrive;
+        jointToReturn.yDrive = returnDrive;
+        jointToReturn.zDrive = returnDrive;
+
+        // [QUAN TRỌNG] Áp dụng lực Xoay (Chống gục đầu/sụp cổ)
+        jointToReturn.angularXDrive = returnDrive;
+        jointToReturn.angularYZDrive = returnDrive;
+
+        // Mở khóa Motion để lò xo hoạt động
+        jointToReturn.xMotion = ConfigurableJointMotion.Free;
+        jointToReturn.yMotion = ConfigurableJointMotion.Free;
+        jointToReturn.zMotion = ConfigurableJointMotion.Free;
+        jointToReturn.angularXMotion = ConfigurableJointMotion.Free;
+        jointToReturn.angularYMotion = ConfigurableJointMotion.Free;
+        jointToReturn.angularZMotion = ConfigurableJointMotion.Free;
 
         float timeOut = 3.0f;
         float timer = 0;
 
         while (timer < timeOut)
         {
-            if (internalJoint == null || currentRb == null) yield break;
+            if (jointToReturn == null || rbToReturn == null) yield break;
 
             Vector3 currentRelPos;
-            if (internalJoint.connectedBody != null)
-                currentRelPos = internalJoint.connectedBody.transform.InverseTransformPoint(currentRb.position);
+            if (jointToReturn.connectedBody != null)
+                currentRelPos = jointToReturn.connectedBody.transform.InverseTransformPoint(rbToReturn.position);
             else
-                currentRelPos = currentRb.position;
+                currentRelPos = rbToReturn.position;
 
-            float distance = Vector3.Distance(currentRelPos, initialRelativePos);
+            float distance = Vector3.Distance(currentRelPos, initialPos);
 
-            float velocityMag = currentRb.linearVelocity.magnitude;
-            if (internalJoint.connectedBody != null)
-                velocityMag = (currentRb.linearVelocity - internalJoint.connectedBody.linearVelocity).magnitude;
+            float velocityMag = rbToReturn.linearVelocity.magnitude;
+            if (jointToReturn.connectedBody != null)
+                velocityMag = (rbToReturn.linearVelocity - jointToReturn.connectedBody.linearVelocity).magnitude;
 
-            if (distance <= 0.05f && velocityMag <= 0.5f) break;
+            // Điều kiện dừng: Về rất sát (0.01f) và đứng yên
+            if (distance <= 0.01f && velocityMag <= 0.5f) break;
 
             timer += Time.deltaTime;
             yield return null;
         }
 
-        if (internalJoint != null) snapshot.Restore(internalJoint);
+        // 4. Kết thúc: Phanh gấp lần cuối
+        if (rbToReturn != null)
+        {
+            rbToReturn.linearVelocity = Vector3.zero;
+            rbToReturn.angularVelocity = Vector3.zero;
+        }
 
-        // Hồi phục lại cho PuppetMaster nếu có (để đảm bảo đồng bộ)
-        RagdollPuppetMaster pm = internalJoint.GetComponentInParent<RagdollPuppetMaster>();
-        if (pm != null && currentRb != null) pm.StiffenMuscle(currentRb);
+        // 5. Khôi phục khớp từ Snapshot gốc
+        if (jointToReturn != null)
+        {
+            mySnapshot.Restore(jointToReturn);
+            // KHÔNG xóa khỏi Dictionary để lần sau kéo vẫn dùng Snapshot gốc này
+        }
 
-        returnCoroutine = null;
-        internalJoint = null;
-        currentRb = null;
+        // 6. Bật lại trọng lực
+        if (rbToReturn != null) rbToReturn.useGravity = true;
+
+        // 7. Gọi PuppetMaster hồi phục
+        RagdollPuppetMaster pm = jointToReturn.GetComponentInParent<RagdollPuppetMaster>();
+        if (pm != null && rbToReturn != null) pm.StiffenMuscle(rbToReturn);
     }
 
     public void ForceStopAndReturn()
@@ -277,15 +333,19 @@ public class RagdollDrag : MonoBehaviour
     public void ForceStopImmediate()
     {
         if (mouseJoint != null) Destroy(mouseJoint);
-        if (returnCoroutine != null) StopCoroutine(returnCoroutine);
-
         isDraggingHead = false;
         currentRb = null;
-        internalJoint = null;
+        currentInternalJoint = null;
+    }
+
+    // Kiểm tra xem Rigidbody này có phải đang được kéo không (cho các script khác gọi)
+    public bool IsDraggingHead(Rigidbody rb)
+    {
+        return currentRb == rb && isDraggingHead;
     }
 
     // ========================================================================
-    // PHẦN LOGIC 2: XOAY TAY CHÂN (THÊM MỚI VÀO)
+    // PHẦN 2: LOGIC XOAY TAY CHÂN (GIỮ NGUYÊN)
     // ========================================================================
 
     void StartDraggingLimb(Rigidbody hitRb)
@@ -296,7 +356,6 @@ public class RagdollDrag : MonoBehaviour
 
         Debug.DrawRay(hitRb.position, hitRb.transform.TransformDirection(pointingAxis) * 2f, Color.yellow, 2f);
 
-        // Với tay chân, ta PHẢI dùng RelaxMuscle để không bị giật lại
         puppetMaster = hitRb.GetComponentInParent<RagdollPuppetMaster>();
         if (puppetMaster != null) puppetMaster.RelaxMuscle(limbRb);
 
@@ -370,27 +429,32 @@ public class RagdollDrag : MonoBehaviour
         limbJoint = null;
     }
 
-
-    //kiem tra xem thang nay co phai la thang dang duoc keo hay khong
-    public bool IsDraggingHead(Rigidbody rb)
+    public void OnActive()
     {
-        return currentRb == rb && isDraggingHead;
+        this.enabled = true;
+    }
+
+    public void OnDeactive()
+    {
+        this.enabled = false;
     }
 }
-// Struct JointSnapshot giữ nguyên
 
+// ========================================================================
+// STRUCT JOINT SNAPSHOT
+// ========================================================================
 public struct JointSnapshot
 {
-    // 1. Motion (Độ tự do)
+    // 1. Motion
     public ConfigurableJointMotion xMotion, yMotion, zMotion;
     public ConfigurableJointMotion angXMotion, angYMotion, angZMotion;
 
-    // 2. Drive (Lực lò xo)
+    // 2. Drive
     public JointDrive xDrive, yDrive, zDrive;
     public JointDrive angXDrive, angYZDrive;
     public RotationDriveMode driveMode;
 
-    // 3. Limits (Giới hạn khớp)
+    // 3. Limits
     public SoftJointLimit lowXLimit, highXLimit;
     public SoftJointLimit yLimit, zLimit;
 
@@ -399,41 +463,29 @@ public struct JointSnapshot
     public Quaternion targetRotation;
     public JointProjectionMode projectionMode;
 
-    // --- HÀM LƯU TRẠNG THÁI ---
     public void Capture(ConfigurableJoint joint)
     {
         xMotion = joint.xMotion; yMotion = joint.yMotion; zMotion = joint.zMotion;
         angXMotion = joint.angularXMotion; angYMotion = joint.angularYMotion; angZMotion = joint.angularZMotion;
-
         xDrive = joint.xDrive; yDrive = joint.yDrive; zDrive = joint.zDrive;
         angXDrive = joint.angularXDrive; angYZDrive = joint.angularYZDrive;
         driveMode = joint.rotationDriveMode;
-
         lowXLimit = joint.lowAngularXLimit; highXLimit = joint.highAngularXLimit;
         yLimit = joint.angularYLimit; zLimit = joint.angularZLimit;
-
         targetPosition = joint.targetPosition;
         targetRotation = joint.targetRotation;
         projectionMode = joint.projectionMode;
     }
 
-    // --- HÀM KHÔI PHỤC TRẠNG THÁI ---
     public void Restore(ConfigurableJoint joint)
     {
-        // Trả lại Limits trước (quan trọng)
         joint.lowAngularXLimit = lowXLimit; joint.highAngularXLimit = highXLimit;
         joint.angularYLimit = yLimit; joint.angularZLimit = zLimit;
-
-        // Trả lại Motion
         joint.xMotion = xMotion; joint.yMotion = yMotion; joint.zMotion = zMotion;
         joint.angularXMotion = angXMotion; joint.angularYMotion = angYMotion; joint.angularZMotion = angZMotion;
-
-        // Trả lại Drive
         joint.xDrive = xDrive; joint.yDrive = yDrive; joint.zDrive = zDrive;
         joint.angularXDrive = angXDrive; joint.angularYZDrive = angYZDrive;
         joint.rotationDriveMode = driveMode;
-
-        // Trả lại các cài đặt khác
         joint.targetPosition = targetPosition;
         joint.targetRotation = targetRotation;
         joint.projectionMode = projectionMode;

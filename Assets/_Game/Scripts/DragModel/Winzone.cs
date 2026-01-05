@@ -13,10 +13,12 @@ public class Winzone : MonoBehaviour
     private CameraFollow cameraFollow;
 
     protected Level levelprarent;
+
     void Start()
     {
         OnInit();
     }
+
     public virtual void OnInit()
     {
         // Lấy Manager từ Camera Main (Nhanh & Tối ưu)
@@ -30,32 +32,61 @@ public class Winzone : MonoBehaviour
             Debug.LogError("❌ Không tìm thấy RagdollDrag trên Main Camera!");
 
         if (cameraFollow != null) cameraFollow.AddWinzone(this);
-        levelprarent = transform.root.GetComponent<Level>();
-        levelprarent.AddHead(this);
+
+        if (transform.root.GetComponent<Level>() != null)
+        {
+            levelprarent = transform.root.GetComponent<Level>();
+            levelprarent.AddHead(this);
+        }
     }
+
     // Hàm xử lý chung: Dính cứng + Đóng băng + Tách rời cổ
     public void LockHeadToTarget(Rigidbody targetRb)
     {
-        //hasStuck = true; // Đánh dấu đã chết/dính -> Không hồi phục nữa
+        // --- 1. TẠO KHỚP DÍNH (Dùng ConfigurableJoint thay vì FixedJoint) ---
+        // ConfigurableJoint có khả năng "Projection" giúp chống rung khi bị kẹt tường
+        ConfigurableJoint newJoint = gameObject.AddComponent<ConfigurableJoint>();
+        newJoint.connectedBody = targetRb;
 
-        // 1. TẠO KHỚP DÍNH (Hàn chặt vào đối phương)
-        FixedJoint joint = gameObject.AddComponent<FixedJoint>();
-        joint.connectedBody = targetRb;
+        // Khóa tất cả các trục để nó hành xử như FixedJoint
+        newJoint.xMotion = ConfigurableJointMotion.Locked;
+        newJoint.yMotion = ConfigurableJointMotion.Locked;
+        newJoint.zMotion = ConfigurableJointMotion.Locked;
+        newJoint.angularXMotion = ConfigurableJointMotion.Locked;
+        newJoint.angularYMotion = ConfigurableJointMotion.Locked;
+        newJoint.angularZMotion = ConfigurableJointMotion.Locked;
 
-        // 2. XỬ LÝ VẬT LÝ (Để đứng yên tại chỗ)
+        // [QUAN TRỌNG] Bật Projection: Giúp khớp tự sửa vị trí khi bị lực ép quá mạnh (như kẹt tường)
+        newJoint.projectionMode = JointProjectionMode.PositionAndRotation;
+        newJoint.projectionDistance = 0.01f; // Khoảng cách sai số chấp nhận được
+        newJoint.projectionAngle = 1f;       // Góc sai số chấp nhận được
+        newJoint.enablePreprocessing = true; // Tính toán ổn định hơn
+
+        // --- 2. BỎ QUA VA CHẠM (Để 2 đầu không đẩy nhau) ---
+        Collider myCol = GetComponent<Collider>();
+        Collider targetCol = targetRb.GetComponent<Collider>();
+        if (myCol != null && targetCol != null)
+        {
+            Physics.IgnoreCollision(myCol, targetCol);
+        }
+
+        // --- 3. XỬ LÝ VẬT LÝ (Để đứng yên tại chỗ) ---
         Rigidbody myRb = GetComponent<Rigidbody>();
         if (myRb != null)
         {
-            myRb.mass = 0.01f; // Giảm khối lượng
+            // [FIX JITTER] Tăng khối lượng: 0.01 quá nhẹ, dễ bị nổ vật lý.
+            myRb.mass = 1f;
 
-            // A. Triệt tiêu vận tốc (STOP DEAD)
-            // (Unity 6 dùng linearVelocity, Unity cũ dùng velocity)
+            // [FIX JITTER] Tắt Interpolate: Tránh rung hình khi dính vào vật khác
+            myRb.interpolation = RigidbodyInterpolation.None;
+
+            // Triệt tiêu vận tốc
             myRb.linearVelocity = Vector3.zero;
             myRb.angularVelocity = Vector3.zero;
 
-            // B. Tăng ma sát cực đại (Để không bị trôi)
-            myRb.linearDamping = 0;
-            myRb.angularDamping = 0;
+            // Tăng ma sát để hãm độ rung
+            myRb.linearDamping = 5f;
+            myRb.angularDamping = 5f;
 
             // C. Tắt lực cơ bắp (Spring/Damper)
             RagdollPuppetMaster myPuppetMaster = GetComponentInParent<RagdollPuppetMaster>();
@@ -64,17 +95,16 @@ public class Winzone : MonoBehaviour
                 myPuppetMaster.RelaxMuscle(myRb);
             }
 
-            // D. Mở khóa vị trí (Unlock Motion) -> Rời khỏi cổ
-            ConfigurableJoint myJoint = GetComponent<ConfigurableJoint>();
-            if (myJoint != null)
+            // D. XÓA KHỚP CỔ CŨ (Tách hoàn toàn khỏi thân)
+            // Lấy tất cả Joint đang có trên đầu
+            ConfigurableJoint[] allJoints = GetComponents<ConfigurableJoint>();
+            foreach (var j in allJoints)
             {
-                myJoint.xMotion = ConfigurableJointMotion.Free;
-                myJoint.yMotion = ConfigurableJointMotion.Free;
-                myJoint.zMotion = ConfigurableJointMotion.Free;
+                // Nếu là cái joint mới tạo để dính vào A thì giữ lại
+                if (j == newJoint) continue;
 
-                myJoint.angularXMotion = ConfigurableJointMotion.Free;
-                myJoint.angularYMotion = ConfigurableJointMotion.Free;
-                myJoint.angularZMotion = ConfigurableJointMotion.Free;
+                // Còn lại (khớp cổ nối với thân) thì xóa đi
+                Destroy(j);
             }
         }
     }
@@ -88,30 +118,30 @@ public class Winzone : MonoBehaviour
             HeadGameplay otherHead = collision.gameObject.GetComponent<HeadGameplay>();
             if (otherHead == null) return;
             if (!isGoal && !otherHead.isGoal) return;
+
             if (isGoal)
             {
                 ParticelPool particelPool = SimplePool.Spawn<ParticelPool>(PoolType.VFX_Hearth, contact.point, Quaternion.Euler(-90, 0, 0));
-                particelPool.PlayVFX();
+                if (particelPool != null) particelPool.PlayVFX();
                 otherHead.gameObject.tag = "Complete";
             }
+
             // --- CASE 1: TÔI LÀ VIP & THẮNG (VIP húc Thường) ---
             if (this.isSpecial != otherHead.isSpecial)
             {
                 levelprarent.RemoveHead(this);
+
                 if (this.isSpecial)
                 {
-                    // Ra lệnh cho Mouse Joint buông ra và nảy về cổ
+                    // A (Special) chạm B -> A thắng, A thu dây về
                     if (dragManager != null)
                     {
                         dragManager.ForceStopAndReturn();
-                        // if (!dragManager.IsDraggingHead(GetComponent<Rigidbody>()))
-                        // {
-                        //     dragManager.ForceStopImmediate();
-                        // }
                     }
                 }
                 else
                 {
+                    // B (Thường) chạm A -> B thua, B dính vào A
                     if (dragManager != null && dragManager.IsDraggingHead(GetComponent<Rigidbody>()))
                     {
                         dragManager.ForceStopImmediate();
@@ -122,12 +152,12 @@ public class Winzone : MonoBehaviour
             // --- CASE 2: HUỀ (Cùng loại va nhau) ---
             else
             {
-                // 1. QUAN TRỌNG: Cắt dây chuột ngay lập tức, KHÔNG nảy về
+                // Cắt dây chuột ngay lập tức
                 if (dragManager != null)
                 {
                     dragManager.ForceStopImmediate();
                 }
-                // 2. Dính vào đối phương và đóng băng tại chỗ
+                // Dính vào đối phương
                 LockHeadToTarget(collision.rigidbody);
             }
         }
