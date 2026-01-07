@@ -10,9 +10,16 @@ public enum DragType
 }
 public class Level : MonoBehaviour
 {
-    [SerializeField] DragType dragType;
+    [SerializeField] List<DragType> dragTypes;
 
-    public DragType DragType => dragType;
+    public List<DragType> DragTypes => dragTypes;
+
+    public float distanceCam;
+
+    [Header("Dùng để xác định vị trí của các đối tượng/mục đích(tutorial)/áp dụng(Level 1)")]
+    public Transform target1;
+
+    public Transform target2;
 
     private List<Winzone> heads = new List<Winzone>();
 
@@ -29,6 +36,7 @@ public class Level : MonoBehaviour
             heads.Remove(head);
             if (heads.Count == 0)
             {
+                GameController.Instance.GameComplete();
                 // Debug.Log("🎉 LEVEL COMPLETE! Tất cả đầu đã rơi xuống.");
             }
         }

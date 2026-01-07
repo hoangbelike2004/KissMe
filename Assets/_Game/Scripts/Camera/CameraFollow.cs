@@ -29,10 +29,13 @@ public class CameraFollow : MonoBehaviour
 
         currentSize = Vector3.Distance(winzones[0].transform.position, winzones[1].transform.position);
         if (currentSize <= sizeDefault) currentSize = sizeDefault;
-        float clampSize = Mathf.Clamp(currentSize * currentSize + fieldOfViewCam, fieldOfViewCam, fieldOfViewCam + 20);
+        float clampSize = Mathf.Clamp(currentSize * currentSize * 2f + fieldOfViewCam, fieldOfViewCam, fieldOfViewCam + 30);
         Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, clampSize, Time.deltaTime * speedMove);
     }
-
+    public void SetDistanceCam(float dis)
+    {
+        this.distance = dis;
+    }
     public void AddWinzone(Winzone wz)
     {
         if (!winzones.Contains(wz))

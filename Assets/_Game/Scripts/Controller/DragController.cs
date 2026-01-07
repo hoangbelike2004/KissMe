@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DragController : MonoBehaviour
 {
-    private DragType currentType;
+    private List<DragType> currentTypes = new List<DragType>();
 
     private Dictionary<DragType, IDrag> dragHandlers = new Dictionary<DragType, IDrag>();
 
@@ -21,20 +21,24 @@ public class DragController : MonoBehaviour
                 dragHandlers.Add(drags[i].DragType, drags[i]);
             }
         }
-        SetState(DragType.Prop);
     }
-    public void SetState(DragType newType)
+    public void SetState(List<DragType> newTypes)
     {
-        if (currentType == newType) return;
+        //dong nhung state cu
+        for (int i = 0; i < currentTypes.Count; i++)
+        {
+            if (dragHandlers.ContainsKey(currentTypes[i]))
+            {
+                dragHandlers[currentTypes[i]].OnDeactive();
+            }
+        }
 
-        ChangeState(newType);
-    }
-
-    public void ChangeState(DragType newType)
-    {
-        dragHandlers[newType].OnActive();
-        if (dragHandlers.ContainsKey(currentType)) dragHandlers[currentType].OnDeactive();
-        currentType = newType;
+        //Mo state moi
+        currentTypes = newTypes;
+        for (int i = 0; i < currentTypes.Count; i++)
+        {
+            dragHandlers[currentTypes[i]].OnActive();
+        }
     }
     void OnEnable()
     {

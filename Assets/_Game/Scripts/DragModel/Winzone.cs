@@ -127,10 +127,9 @@ public class Winzone : MonoBehaviour
             }
 
             // --- CASE 1: TÔI LÀ VIP & THẮNG (VIP húc Thường) ---
+            levelprarent.RemoveHead(this);
             if (this.isSpecial != otherHead.isSpecial)
             {
-                levelprarent.RemoveHead(this);
-
                 if (this.isSpecial)
                 {
                     // A (Special) chạm B -> A thắng, A thu dây về

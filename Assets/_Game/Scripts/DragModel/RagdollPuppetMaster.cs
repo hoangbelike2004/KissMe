@@ -153,7 +153,7 @@ public class RagdollPuppetMaster : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    void LateUpdate()
     {
         foreach (var limb in limbs)
         {

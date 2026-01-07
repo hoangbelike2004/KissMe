@@ -85,6 +85,7 @@ public class RagdollDrag : MonoBehaviour, IDrag
                     if (hit.collider.CompareTag(stretchableTag))
                     {
                         StartDraggingHead(hit.rigidbody, hit.point);
+                        GameController.Instance.DestroyTutorial();
                     }
                     // B. XOAY TAY CHÂN
                     else if (hit.collider.CompareTag(limbTag))

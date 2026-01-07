@@ -24,9 +24,10 @@ public class GameComplete : Winzone
             }
             // --- CASE 1: TÔI LÀ VIP & THẮNG (VIP húc Thường) ---
             levelprarent.RemoveHead(this);
+            levelprarent.RemoveHead(otherHead);
             if (this.isSpecial != otherHead.isSpecial)
             {
-                if (levelprarent.DragType == DragType.Prop)
+                if (this is GameComplete && otherHead is GameComplete)
                 {
                     Observer.OnStopDragProp?.Invoke();
                 }
@@ -52,12 +53,13 @@ public class GameComplete : Winzone
             // --- CASE 2: HUỀ (Cùng loại va nhau) ---
             else
             {
-                if (levelprarent.DragType == DragType.Prop)
+                if (this is GameComplete && otherHead is GameComplete)
                 {
                     Observer.OnStopDragProp?.Invoke();
                 }
                 else
                 {
+                    Debug.Log(1);
                     // 1. QUAN TRỌNG: Cắt dây chuột ngay lập tức, KHÔNG nảy về
                     if (dragManager != null)
                     {
