@@ -8,6 +8,8 @@ public class Winzone : MonoBehaviour
 
     public bool isGoal = false;
 
+    public bool isFollow = true;
+
     protected RagdollDrag dragManager;  // Tham chiếu script kéo chuột
 
     private CameraFollow cameraFollow;
@@ -31,7 +33,7 @@ public class Winzone : MonoBehaviour
         if (dragManager == null)
             Debug.LogError("❌ Không tìm thấy RagdollDrag trên Main Camera!");
 
-        if (cameraFollow != null) cameraFollow.AddWinzone(this);
+        if (cameraFollow != null && isFollow) cameraFollow.AddWinzone(this);
 
         if (transform.root.GetComponent<Level>() != null)
         {
@@ -128,6 +130,8 @@ public class Winzone : MonoBehaviour
 
             // --- CASE 1: TÔI LÀ VIP & THẮNG (VIP húc Thường) ---
             levelprarent.RemoveHead(this);
+            RagdollDragBodyOnly ragdollDragBodyOnly = Camera.main.GetComponent<RagdollDragBodyOnly>();
+            if (ragdollDragBodyOnly != null && ragdollDragBodyOnly.enabled) ragdollDragBodyOnly.DisableSnapBack();
             if (this.isSpecial != otherHead.isSpecial)
             {
                 if (this.isSpecial)

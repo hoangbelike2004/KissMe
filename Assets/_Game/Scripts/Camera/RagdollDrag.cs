@@ -86,10 +86,12 @@ public class RagdollDrag : MonoBehaviour, IDrag
                     {
                         StartDraggingHead(hit.rigidbody, hit.point);
                         GameController.Instance.DestroyTutorial();
+                        GameController.Instance.Vibrate();
                     }
                     // B. XOAY TAY CHÂN
                     else if (hit.collider.CompareTag(limbTag))
                     {
+                        GameController.Instance.Vibrate();
                         StartDraggingLimb(hit.rigidbody);
                     }
                 }
@@ -444,7 +446,7 @@ public class RagdollDrag : MonoBehaviour, IDrag
 // ========================================================================
 // STRUCT JOINT SNAPSHOT
 // ========================================================================
-public struct JointSnapshot
+public class JointSnapshot
 {
     // 1. Motion
     public ConfigurableJointMotion xMotion, yMotion, zMotion;

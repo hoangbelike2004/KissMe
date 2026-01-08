@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using CandyCoded.HapticFeedback;
 
 public class GameController : Singleton<GameController>
 {
@@ -14,14 +15,18 @@ public class GameController : Singleton<GameController>
     private CameraFollow m_cameraFollow;
     private Level level;
 
+    private GameSetting gameSetting;
+
     void Awake()
     {
         m_cameraFollow = Camera.main.GetComponent<CameraFollow>();
+        gameSetting = Resources.Load<GameSetting>(Constants.KEY_LOAD_GAME_SETTING);
     }
     void Start()
     {
         LoadLevel();
         ShowTutorial();
+        SoundManager.Instance.PlaySound(eAudioName.Audio_Music);
     }
 
     public void GameComplete()
@@ -30,6 +35,18 @@ public class GameController : Singleton<GameController>
         StartCoroutine(WaitForLoadLevel());
     }
 
+
+    //sang level khac ngay va luon
+
+    public void NextLevel()
+    {
+        currentLevel++;
+        m_cameraFollow.ClearWinZone();
+        Destroy(level.gameObject);
+        level = null;
+        LoadLevel();
+        if (currentLevel > 1 && canvasTutorial != null) Destroy(canvasTutorial.gameObject);
+    }
     IEnumerator WaitForLoadLevel()
     {
         yield return new WaitForSeconds(waitTimeLoadLevel);
@@ -56,5 +73,13 @@ public class GameController : Singleton<GameController>
     public void DestroyTutorial()
     {
         if (currentLevel == 1 && canvasTutorial != null) Destroy(canvasTutorial.gameObject);
+    }
+
+    public void Vibrate()
+    {
+        if (gameSetting.isVibrate)
+        {
+            HapticFeedback.LightFeedback();
+        }
     }
 }

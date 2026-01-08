@@ -469,7 +469,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75a7b7bf9f5f2400084161b90a819b89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level
-  dragTypes: 0100000002000000
+  dragTypes: 02000000
   distanceCam: 2
   target1: {fileID: 0}
   target2: {fileID: 0}
@@ -629,7 +629,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ffaba9d8009e54f2da6700e5bae4f1ea, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.111
+      value: -0.0728
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ffaba9d8009e54f2da6700e5bae4f1ea, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2805,7 +2805,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 03676197c8d65463d9fa32fbe60d445e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.1
+      value: -0.0618
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 03676197c8d65463d9fa32fbe60d445e, type: 3}
       propertyPath: m_LocalPosition.y
@@ -4399,9 +4399,9 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 8
   m_CollisionDetection: 0
 --- !u!136 &3944598087679665687
 CapsuleCollider:
@@ -4480,7 +4480,7 @@ CapsuleCollider:
   m_Radius: 0.06
   m_Height: 0.35
   m_Direction: 1
-  m_Center: {x: 0, y: 0.07, z: -0.023}
+  m_Center: {x: 0, y: 0.07, z: 0}
 --- !u!153 &7366713954144115057
 ConfigurableJoint:
   m_ObjectHideFlags: 0

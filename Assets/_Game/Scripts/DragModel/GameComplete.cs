@@ -21,10 +21,11 @@ public class GameComplete : Winzone
                 particelPool.PlayVFX();
                 otherHead.gameObject.tag = "Complete";
                 gameObject.tag = "Complete";
+                GameController.Instance.GameComplete();
             }
             // --- CASE 1: TÔI LÀ VIP & THẮNG (VIP húc Thường) ---
-            levelprarent.RemoveHead(this);
-            levelprarent.RemoveHead(otherHead);
+            // levelprarent.RemoveHead(this);
+            // levelprarent.RemoveHead(otherHead);
             if (this.isSpecial != otherHead.isSpecial)
             {
                 if (this is GameComplete && otherHead is GameComplete)
@@ -59,7 +60,6 @@ public class GameComplete : Winzone
                 }
                 else
                 {
-                    Debug.Log(1);
                     // 1. QUAN TRỌNG: Cắt dây chuột ngay lập tức, KHÔNG nảy về
                     if (dragManager != null)
                     {

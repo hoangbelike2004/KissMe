@@ -58,4 +58,5 @@ public enum PoolType
 {
     None,
     VFX_Hearth,
+    Audio_Sources,
 }

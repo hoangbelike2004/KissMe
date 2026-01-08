@@ -36,7 +36,7 @@ public class CanvasTutorial : MonoBehaviour
             startPos = target1.position + offset;
             endPos = target2.position + offset;
             rectTutorial.position = startPos;
-            rectTutorial.DOMove(endPos, 1.5f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine);
+            rectTutorial.DOMove(endPos, 1.5f).SetLoops(-1, LoopType.Restart).SetEase(Ease.InOutSine);
         }
     }
 }

@@ -76,7 +76,7 @@ public class DragProp : MonoBehaviour, IDrag
         {
             if (!hit.collider.CompareTag(propTag)) return;
             if (hit.rigidbody == null) return;
-
+            GameController.Instance.Vibrate();
             draggedRb = hit.rigidbody;
 
             // --- LƯU TRẠNG THÁI CŨ ---
