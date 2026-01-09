@@ -245,7 +245,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75a7b7bf9f5f2400084161b90a819b89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level
-  dragTypes: 03000000
+  dragTypes: 0300000001000000
   distanceCam: 3
   target1: {fileID: 0}
   target2: {fileID: 0}
