@@ -242,6 +242,8 @@ MonoBehaviour:
   distanceCam: 0
   target1: {fileID: 0}
   target2: {fileID: 0}
+  interactableObject: {fileID: 0}
+  interactableObject2: {fileID: 0}
 --- !u!1 &3228831730328786332
 GameObject:
   m_ObjectHideFlags: 0
@@ -487,10 +489,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75a7b7bf9f5f2400084161b90a819b89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level
-  dragTypes: 03000000
+  dragTypes: 0300000001000000
   distanceCam: 3
   target1: {fileID: 0}
   target2: {fileID: 0}
+  interactableObject: {fileID: 0}
+  interactableObject2: {fileID: 0}
 --- !u!1 &8538479395971500502
 GameObject:
   m_ObjectHideFlags: 0
@@ -711,10 +715,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 479975bff6e74424692c6f8c9a77b150, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameComplete
+  winzoneType: 0
+  VFX_Pool: 5
   isSpecial: 1
   targetTag: Head
   isGoal: 1
   isFollow: 1
+  isWinningObject: 1
 --- !u!65 &3363865319782669894
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3167,10 +3174,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 479975bff6e74424692c6f8c9a77b150, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameComplete
+  winzoneType: 0
+  VFX_Pool: 1
   isSpecial: 1
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  isWinningObject: 1
 --- !u!54 &1118886255803513658
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3386,7 +3396,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3897462237488877691, guid: 71b44ed5d30324c898c1f72d60ca3a7e, type: 3}
       propertyPath: m_TagString
-      value: Head
+      value: Complete
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5648,10 +5658,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 479975bff6e74424692c6f8c9a77b150, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameComplete
+  winzoneType: 0
+  VFX_Pool: 1
   isSpecial: 0
   targetTag: Head
   isGoal: 0
   isFollow: 1
+  isWinningObject: 0
 --- !u!1001 &8988371897512380763
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5842,7 +5855,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3897462237488877691, guid: 82fd58ac4b4064bddb635867c508516d, type: 3}
       propertyPath: m_TagString
-      value: Head
+      value: Complete
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

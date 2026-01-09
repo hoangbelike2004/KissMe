@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 // Định nghĩa Enum ngay đây
 public enum DragType
@@ -21,7 +22,13 @@ public class Level : MonoBehaviour
 
     public Transform target2;
 
+    public GameObject interactableObject;
+
+    public GameObject interactableObject2;
+
     private List<Winzone> heads = new List<Winzone>();
+
+    private WinzoneType winzoneType;
 
     public void AddHead(Winzone head)
     {
@@ -34,11 +41,38 @@ public class Level : MonoBehaviour
         if (heads.Contains(head))
         {
             heads.Remove(head);
-            if (heads.Count == 0)
+            var objectCompletes = heads.Where(x => x.isWinningObject).ToList();
+            if (objectCompletes.Count == 0)
             {
+                ChangeStateWinZone();
                 GameController.Instance.GameComplete();
                 // Debug.Log("🎉 LEVEL COMPLETE! Tất cả đầu đã rơi xuống.");
             }
+        }
+    }
+
+    public void SetWinzoneType(WinzoneType type)
+    {
+        winzoneType = type;
+    }
+
+    public void ChangeStateWinZone()
+    {
+        switch (winzoneType)
+        {
+            case WinzoneType.Cake:
+                interactableObject.SetActive(true);
+                interactableObject2.SetActive(false);
+                break;
+            case WinzoneType.Frog:
+                interactableObject.gameObject.SetActive(true);
+                interactableObject2.SetActive(false);
+                break;
+            case WinzoneType.Pin:
+                RagdollPuppetMaster ragdollPuppetMaster = interactableObject.GetComponent<RagdollPuppetMaster>();
+                ragdollPuppetMaster.enabled = true;
+                interactableObject2.SetActive(false);
+                break;
         }
     }
 }

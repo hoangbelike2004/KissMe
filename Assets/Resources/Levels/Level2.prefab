@@ -473,6 +473,8 @@ MonoBehaviour:
   distanceCam: 2
   target1: {fileID: 0}
   target2: {fileID: 0}
+  interactableObject: {fileID: 0}
+  interactableObject2: {fileID: 0}
 --- !u!1 &8092623802112218660
 GameObject:
   m_ObjectHideFlags: 0
@@ -603,6 +605,8 @@ MonoBehaviour:
   distanceCam: 0
   target1: {fileID: 0}
   target2: {fileID: 0}
+  interactableObject: {fileID: 0}
+  interactableObject2: {fileID: 0}
 --- !u!1001 &4823930630624990649
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2466,9 +2470,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1c9e797e3e54fa09fcd1853de30388, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeadGameplay
+  winzoneType: 0
+  VFX_Pool: 1
   isSpecial: 0
   targetTag: Head
   isGoal: 0
+  isFollow: 1
+  isWinningObject: 1
 --- !u!1 &8730218100110915163 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4311629582287283170, guid: ffaba9d8009e54f2da6700e5bae4f1ea, type: 3}
@@ -5064,6 +5072,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1c9e797e3e54fa09fcd1853de30388, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeadGameplay
+  winzoneType: 0
+  VFX_Pool: 1
   isSpecial: 1
   targetTag: Head
   isGoal: 1
+  isFollow: 1
+  isWinningObject: 1

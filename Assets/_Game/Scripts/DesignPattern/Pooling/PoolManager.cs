@@ -59,4 +59,9 @@ public enum PoolType
     None,
     VFX_Hearth,
     Audio_Sources,
+
+    VFX_Explode_1,
+
+    VFX_Electronic,
+    VFX_Complete,
 }

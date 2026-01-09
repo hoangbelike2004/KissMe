@@ -132,6 +132,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Level
   dragTypes: 03000000
   distanceCam: 3.5
+  target1: {fileID: 0}
+  target2: {fileID: 0}
+  interactableObject: {fileID: 0}
+  interactableObject2: {fileID: 0}
 --- !u!1 &3428274088271443974
 GameObject:
   m_ObjectHideFlags: 0
@@ -260,6 +264,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Level
   dragTypes: 
   distanceCam: 0
+  target1: {fileID: 0}
+  target2: {fileID: 0}
+  interactableObject: {fileID: 0}
+  interactableObject2: {fileID: 0}
 --- !u!1 &5446270069574447853
 GameObject:
   m_ObjectHideFlags: 0
@@ -384,6 +392,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lv3_wwallplate
       objectReference: {fileID: 0}
+    - target: {fileID: 313666496831613791, guid: 7b7231a1a6c2048dab28d3ce7b9231a6, type: 3}
+      propertyPath: isGoal
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 814898867190675019, guid: 7b7231a1a6c2048dab28d3ce7b9231a6, type: 3}
       propertyPath: m_LocalScale.x
       value: 6.666667
@@ -435,6 +447,18 @@ PrefabInstance:
     - target: {fileID: 814898867190675019, guid: 7b7231a1a6c2048dab28d3ce7b9231a6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4516395082566612745, guid: 7b7231a1a6c2048dab28d3ce7b9231a6, type: 3}
+      propertyPath: m_Size.x
+      value: 0.027148379
+      objectReference: {fileID: 0}
+    - target: {fileID: 4516395082566612745, guid: 7b7231a1a6c2048dab28d3ce7b9231a6, type: 3}
+      propertyPath: m_Center.x
+      value: 0.00845894
+      objectReference: {fileID: 0}
+    - target: {fileID: 4516395082566612745, guid: 7b7231a1a6c2048dab28d3ce7b9231a6, type: 3}
+      propertyPath: m_Center.z
+      value: 4.3247905e-11
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -508,6 +532,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5482795834848776468, guid: 2a074923d8ac84aca944ac93e75e3e89, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7196325129729076071, guid: 2a074923d8ac84aca944ac93e75e3e89, type: 3}
+      propertyPath: isGoal
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7196325129729076071, guid: 2a074923d8ac84aca944ac93e75e3e89, type: 3}
+      propertyPath: VFX_Pool
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7196325129729076071, guid: 2a074923d8ac84aca944ac93e75e3e89, type: 3}
+      propertyPath: isSpecial
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

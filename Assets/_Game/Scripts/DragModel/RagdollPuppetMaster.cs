@@ -57,6 +57,7 @@ public class RagdollPuppetMaster : MonoBehaviour
     {
         // A. Tạo ra bản sao từ Prefab
         GameObject ghostInstance = Instantiate(ghostPrefab, transform.position, transform.rotation);
+        ghostInstance.transform.SetParent(transform.root);
         ghostInstance.name = ghostPrefab.name + "_Ghost_Hidden";
 
         // B. CẤU HÌNH ANIMATOR (Lấy trực tiếp từ Prefab)

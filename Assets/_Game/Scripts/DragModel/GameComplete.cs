@@ -17,15 +17,18 @@ public class GameComplete : Winzone
             if (!isGoal && !otherHead.isGoal) return;
             if (isGoal)
             {
-                ParticelPool particelPool = SimplePool.Spawn<ParticelPool>(PoolType.VFX_Hearth, contact.point, Quaternion.Euler(-90, 0, 0));
-                particelPool.PlayVFX();
+                if (VFX_Pool != PoolType.None)
+                {
+                    ParticelPool particelPool = SimplePool.Spawn<ParticelPool>(VFX_Pool, contact.point, Quaternion.identity);
+                    particelPool.PlayVFX();
+                }
                 otherHead.gameObject.tag = "Complete";
                 gameObject.tag = "Complete";
-                GameController.Instance.GameComplete();
+                //GameController.Instance.GameComplete();
             }
             // --- CASE 1: TÔI LÀ VIP & THẮNG (VIP húc Thường) ---
-            // levelprarent.RemoveHead(this);
-            // levelprarent.RemoveHead(otherHead);
+            levelprarent.RemoveHead(this);
+            levelprarent.RemoveHead(otherHead);
             if (this.isSpecial != otherHead.isSpecial)
             {
                 if (this is GameComplete && otherHead is GameComplete)

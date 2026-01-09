@@ -1260,6 +1260,18 @@ MonoBehaviour:
     amount: 4
     prefab: {fileID: 3360565159865550122, guid: 3ef1ea1d5de5247968566ec7fbf1da0b, type: 3}
     parent: {fileID: 1429549803}
+  - _name: VFX_Explode_1
+    amount: 4
+    prefab: {fileID: 5275681157976807324, guid: a592992aac06b496a9b6bde05e6fc5b6, type: 3}
+    parent: {fileID: 534069692}
+  - _name: VFX_Electronic
+    amount: 4
+    prefab: {fileID: 1750681040881483717, guid: 3c636e202aa3e4b9dad65d6f4cce7584, type: 3}
+    parent: {fileID: 534069692}
+  - _name: VFX_Complete
+    amount: 4
+    prefab: {fileID: 5792593615919373365, guid: 605e890c11aee418bad8bc84faf42562, type: 3}
+    parent: {fileID: 534069692}
 --- !u!4 &1432638439
 Transform:
   m_ObjectHideFlags: 0

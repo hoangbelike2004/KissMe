@@ -45,10 +45,10 @@ public class GameController : Singleton<GameController>
         Destroy(level.gameObject);
         level = null;
         LoadLevel();
-        if (currentLevel > 1 && canvasTutorial != null) Destroy(canvasTutorial.gameObject);
     }
     IEnumerator WaitForLoadLevel()
     {
+        if (currentLevel > 1 && canvasTutorial != null) Destroy(canvasTutorial.gameObject);
         yield return new WaitForSeconds(waitTimeLoadLevel);
         m_cameraFollow.ClearWinZone();
         Destroy(level.gameObject);

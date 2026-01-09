@@ -32,7 +32,7 @@ public class DragController : MonoBehaviour
                 dragHandlers[currentTypes[i]].OnDeactive();
             }
         }
-
+        currentTypes.Clear();
         //Mo state moi
         currentTypes = newTypes;
         for (int i = 0; i < currentTypes.Count; i++)

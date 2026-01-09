@@ -1,14 +1,28 @@
 using UnityEngine;
 
+public enum WinzoneType
+{
+    Normal,
+    Cake,
+    Frog,
+    Pin,
+}
 public class Winzone : MonoBehaviour
 {
     [Header("Cấu hình Phe phái")]
+    public WinzoneType winzoneType = WinzoneType.Normal;
+
+    [HideInInspector]
+    public PoolType VFX_Pool = PoolType.VFX_Hearth;// hieu ung khi chạm
+
     public bool isSpecial = false;    // Tích vào = Đầu VIP (Nhân vật chính)
     public string targetTag = "Head"; // Tag để nhận diện đầu khác
 
-    public bool isGoal = false;
+    public bool isGoal = false;// phan biet doi tuong chien thang
 
-    public bool isFollow = true;
+    public bool isFollow = true;// cam se theo doi
+
+    public bool isWinningObject = true;// phan biet doi tuong can tuong tac de chien thang
 
     protected RagdollDrag dragManager;  // Tham chiếu script kéo chuột
 
@@ -39,6 +53,13 @@ public class Winzone : MonoBehaviour
         {
             levelprarent = transform.root.GetComponent<Level>();
             levelprarent.AddHead(this);
+        }
+        if (winzoneType != WinzoneType.Normal)
+        {
+            if (levelprarent != null)
+            {
+                levelprarent.SetWinzoneType(winzoneType);
+            }
         }
     }
 
@@ -123,7 +144,7 @@ public class Winzone : MonoBehaviour
 
             if (isGoal)
             {
-                ParticelPool particelPool = SimplePool.Spawn<ParticelPool>(PoolType.VFX_Hearth, contact.point, Quaternion.Euler(-90, 0, 0));
+                ParticelPool particelPool = SimplePool.Spawn<ParticelPool>(VFX_Pool, contact.point, Quaternion.Euler(-90, 0, 0));
                 if (particelPool != null) particelPool.PlayVFX();
                 otherHead.gameObject.tag = "Complete";
             }

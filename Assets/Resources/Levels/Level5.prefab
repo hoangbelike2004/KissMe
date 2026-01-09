@@ -961,6 +961,8 @@ MonoBehaviour:
   distanceCam: 0
   target1: {fileID: 0}
   target2: {fileID: 0}
+  interactableObject: {fileID: 0}
+  interactableObject2: {fileID: 0}
 --- !u!1 &8968363963210598481
 GameObject:
   m_ObjectHideFlags: 0
@@ -1097,6 +1099,8 @@ MonoBehaviour:
   distanceCam: 3
   target1: {fileID: 0}
   target2: {fileID: 0}
+  interactableObject: {fileID: 0}
+  interactableObject2: {fileID: 0}
 --- !u!1001 &1157006131197739961
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1161,6 +1165,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -1206874426333947015, guid: ea43878df22864a3a8433bb8c75abf69, type: 3}
+      propertyPath: m_AABB.m_Extent.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: -1206874426333947015, guid: ea43878df22864a3a8433bb8c75abf69, type: 3}
+      propertyPath: m_AABB.m_Extent.y
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: -1206874426333947015, guid: ea43878df22864a3a8433bb8c75abf69, type: 3}
+      propertyPath: m_AABB.m_Extent.z
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ea43878df22864a3a8433bb8c75abf69, type: 3}
       propertyPath: m_Name
       value: LV5_boy_unity
@@ -1168,6 +1184,18 @@ PrefabInstance:
     - target: {fileID: 3897462237488877691, guid: ea43878df22864a3a8433bb8c75abf69, type: 3}
       propertyPath: m_TagString
       value: Head
+      objectReference: {fileID: 0}
+    - target: {fileID: 4320098735860348617, guid: ea43878df22864a3a8433bb8c75abf69, type: 3}
+      propertyPath: m_AABB.m_Extent.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4320098735860348617, guid: ea43878df22864a3a8433bb8c75abf69, type: 3}
+      propertyPath: m_AABB.m_Extent.y
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4320098735860348617, guid: ea43878df22864a3a8433bb8c75abf69, type: 3}
+      propertyPath: m_AABB.m_Extent.z
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2175,9 +2203,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1c9e797e3e54fa09fcd1853de30388, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeadGameplay
+  winzoneType: 0
+  VFX_Pool: 1
   isSpecial: 0
   targetTag: Head
   isGoal: 0
+  isFollow: 1
+  isWinningObject: 1
 --- !u!1 &2958270504777288693 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4108234674411243596, guid: ea43878df22864a3a8433bb8c75abf69, type: 3}
@@ -3550,6 +3582,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1c9e797e3e54fa09fcd1853de30388, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeadGameplay
+  winzoneType: 0
+  VFX_Pool: 1
   isSpecial: 1
   targetTag: Head
   isGoal: 1
+  isFollow: 1
+  isWinningObject: 1
