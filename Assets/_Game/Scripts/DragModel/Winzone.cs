@@ -6,6 +6,7 @@ public enum WinzoneType
     Cake,
     Frog,
     Pin,
+    Mask,
 }
 public class Winzone : MonoBehaviour
 {
@@ -150,7 +151,7 @@ public class Winzone : MonoBehaviour
             }
 
             // --- CASE 1: TÔI LÀ VIP & THẮNG (VIP húc Thường) ---
-            levelprarent.RemoveHead(this);
+            if (levelprarent != null) levelprarent.RemoveHead(this);
             RagdollDragBodyOnly ragdollDragBodyOnly = Camera.main.GetComponent<RagdollDragBodyOnly>();
             if (ragdollDragBodyOnly != null && ragdollDragBodyOnly.enabled) ragdollDragBodyOnly.DisableSnapBack();
             if (this.isSpecial != otherHead.isSpecial)

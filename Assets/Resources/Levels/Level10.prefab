@@ -3219,6 +3219,18 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Head
       objectReference: {fileID: 0}
+    - target: {fileID: 7751996367803956135, guid: 0fa427c9d511146c1b689a442d75d9e9, type: 3}
+      propertyPath: m_AABB.m_Extent.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7751996367803956135, guid: 0fa427c9d511146c1b689a442d75d9e9, type: 3}
+      propertyPath: m_AABB.m_Extent.y
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7751996367803956135, guid: 0fa427c9d511146c1b689a442d75d9e9, type: 3}
+      propertyPath: m_AABB.m_Extent.z
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

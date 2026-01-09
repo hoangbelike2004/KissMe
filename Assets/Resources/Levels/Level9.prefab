@@ -130,6 +130,8 @@ MonoBehaviour:
   distanceCam: 0
   target1: {fileID: 0}
   target2: {fileID: 0}
+  interactableObject: {fileID: 0}
+  interactableObject2: {fileID: 0}
 --- !u!1 &4742158640426927229
 GameObject:
   m_ObjectHideFlags: 0
@@ -266,6 +268,8 @@ MonoBehaviour:
   distanceCam: 3
   target1: {fileID: 0}
   target2: {fileID: 0}
+  interactableObject: {fileID: 0}
+  interactableObject2: {fileID: 0}
 --- !u!1 &5657475340675313010
 GameObject:
   m_ObjectHideFlags: 0
@@ -776,10 +780,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 479975bff6e74424692c6f8c9a77b150, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameComplete
+  winzoneType: 0
+  VFX_Pool: 1
   isSpecial: 1
   targetTag: Head
   isGoal: 1
   isFollow: 1
+  isWinningObject: 1
 --- !u!4 &4385304363247309120 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a13377d9b1860476c800be9d40fccbf0, type: 3}
@@ -856,6 +863,18 @@ PrefabInstance:
     - target: {fileID: 3897462237488877691, guid: 76ca29f611691422996ecee8ce163731, type: 3}
       propertyPath: m_TagString
       value: Head
+      objectReference: {fileID: 0}
+    - target: {fileID: 7751996367803956135, guid: 76ca29f611691422996ecee8ce163731, type: 3}
+      propertyPath: m_AABB.m_Extent.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7751996367803956135, guid: 76ca29f611691422996ecee8ce163731, type: 3}
+      propertyPath: m_AABB.m_Extent.y
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7751996367803956135, guid: 76ca29f611691422996ecee8ce163731, type: 3}
+      propertyPath: m_AABB.m_Extent.z
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2962,7 +2981,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1c9e797e3e54fa09fcd1853de30388, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeadGameplay
+  winzoneType: 0
+  VFX_Pool: 1
   isSpecial: 1
   targetTag: Head
   isGoal: 0
   isFollow: 1
+  isWinningObject: 1

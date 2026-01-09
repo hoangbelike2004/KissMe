@@ -73,6 +73,11 @@ public class Level : MonoBehaviour
                 ragdollPuppetMaster.enabled = true;
                 interactableObject2.SetActive(false);
                 break;
+            case WinzoneType.Mask:
+                interactableObject.SetActive(false);
+                HeadGameplay headGameplay = interactableObject2.GetComponent<HeadGameplay>();
+                headGameplay.enabled = true;
+                break;
         }
     }
 }

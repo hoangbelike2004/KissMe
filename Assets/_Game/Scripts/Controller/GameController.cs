@@ -17,10 +17,14 @@ public class GameController : Singleton<GameController>
 
     private GameSetting gameSetting;
 
+    private int maxLevel;
+
     void Awake()
     {
         m_cameraFollow = Camera.main.GetComponent<CameraFollow>();
         gameSetting = Resources.Load<GameSetting>(Constants.KEY_LOAD_GAME_SETTING);
+        GameObject[] gameObjects = Resources.LoadAll<GameObject>("Levels");
+        maxLevel = gameObjects.Length;
     }
     void Start()
     {
@@ -58,7 +62,15 @@ public class GameController : Singleton<GameController>
 
     public void LoadLevel()
     {
-        level = Resources.Load<Level>(Constants.KEY_LOAD_LEVEL + currentLevel);
+        int tmp = 0;
+        if (currentLevel <= maxLevel) tmp = currentLevel;
+        else
+        {
+            tmp = currentLevel % maxLevel;
+            if (tmp == 0) tmp = maxLevel;
+            Debug.Log(tmp);
+        }
+        level = Resources.Load<Level>(Constants.KEY_LOAD_LEVEL + tmp);
         level = Instantiate(level);
         m_cameraFollow.SetDistanceCam(level.distanceCam);
         Observer.OnSetDragType?.Invoke(level.DragTypes);
