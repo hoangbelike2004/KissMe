@@ -7,6 +7,7 @@ public enum WinzoneType
     Frog,
     Pin,
     Mask,
+    Tablet,
 }
 public class Winzone : MonoBehaviour
 {

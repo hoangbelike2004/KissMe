@@ -68,7 +68,6 @@ public class GameController : Singleton<GameController>
         {
             tmp = currentLevel % maxLevel;
             if (tmp == 0) tmp = maxLevel;
-            Debug.Log(tmp);
         }
         level = Resources.Load<Level>(Constants.KEY_LOAD_LEVEL + tmp);
         level = Instantiate(level);

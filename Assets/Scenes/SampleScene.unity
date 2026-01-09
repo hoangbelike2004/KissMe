@@ -1023,6 +1023,77 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CanvasTutorial
   rectTutorial: {fileID: 1185179545}
   offset: {x: 0.15, y: 0, z: -0.3}
+--- !u!1001 &1271163726
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1740042183331541101, guid: 3176bf3bd17cb4b1bb4622b06040ea95, type: 3}
+      propertyPath: interactableObject
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1740042183331541101, guid: 3176bf3bd17cb4b1bb4622b06040ea95, type: 3}
+      propertyPath: interactableObject2
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2093354652126872582, guid: 3176bf3bd17cb4b1bb4622b06040ea95, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2093354652126872582, guid: 3176bf3bd17cb4b1bb4622b06040ea95, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2093354652126872582, guid: 3176bf3bd17cb4b1bb4622b06040ea95, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2093354652126872582, guid: 3176bf3bd17cb4b1bb4622b06040ea95, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2093354652126872582, guid: 3176bf3bd17cb4b1bb4622b06040ea95, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2093354652126872582, guid: 3176bf3bd17cb4b1bb4622b06040ea95, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2093354652126872582, guid: 3176bf3bd17cb4b1bb4622b06040ea95, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2093354652126872582, guid: 3176bf3bd17cb4b1bb4622b06040ea95, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2093354652126872582, guid: 3176bf3bd17cb4b1bb4622b06040ea95, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2093354652126872582, guid: 3176bf3bd17cb4b1bb4622b06040ea95, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5988541285034828247, guid: 3176bf3bd17cb4b1bb4622b06040ea95, type: 3}
+      propertyPath: m_Name
+      value: Level12 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5988541285034828247, guid: 3176bf3bd17cb4b1bb4622b06040ea95, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects:
+    - {fileID: 4858097742291407182, guid: 3176bf3bd17cb4b1bb4622b06040ea95, type: 3}
+    - {fileID: 5620347156715061015, guid: 3176bf3bd17cb4b1bb4622b06040ea95, type: 3}
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3176bf3bd17cb4b1bb4622b06040ea95, type: 3}
 --- !u!1 &1363529719
 GameObject:
   m_ObjectHideFlags: 0
@@ -1173,7 +1244,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameController
   waitTimeLoadLevel: 2
-  currentLevel: 11
+  currentLevel: 13
   canvasGameplay: {fileID: 1363529724}
   canvasTutorial: {fileID: 1185179549}
 --- !u!4 &1395095815
@@ -1683,3 +1754,4 @@ SceneRoots:
   - {fileID: 709326791}
   - {fileID: 1482586354}
   - {fileID: 692312870}
+  - {fileID: 1271163726}

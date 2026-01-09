@@ -78,6 +78,10 @@ public class Level : MonoBehaviour
                 HeadGameplay headGameplay = interactableObject2.GetComponent<HeadGameplay>();
                 headGameplay.enabled = true;
                 break;
+            case WinzoneType.Tablet:
+                interactableObject.SetActive(true);
+                interactableObject2.SetActive(false);
+                break;
         }
     }
 }
