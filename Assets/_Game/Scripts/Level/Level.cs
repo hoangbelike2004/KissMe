@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using UnityEngine;
+using UnityEngine.InputSystem;
 // Định nghĩa Enum ngay đây
 public enum DragType
 {
@@ -13,6 +15,9 @@ public class Level : MonoBehaviour
 {
     [SerializeField] List<DragType> dragTypes;
 
+    public Vector3 offSetEffect;
+
+    public float timeDelaywin;
     public List<DragType> DragTypes => dragTypes;
 
     public float distanceCam;
@@ -45,8 +50,6 @@ public class Level : MonoBehaviour
             if (objectCompletes.Count == 0)
             {
                 ChangeStateWinZone();
-                GameController.Instance.GameComplete();
-                // Debug.Log("🎉 LEVEL COMPLETE! Tất cả đầu đã rơi xuống.");
             }
         }
     }
@@ -82,6 +85,41 @@ public class Level : MonoBehaviour
                 interactableObject.SetActive(true);
                 interactableObject2.SetActive(false);
                 break;
+            case WinzoneType.Key:
+                interactableObject.transform
+                    .DORotate(new Vector3(0, 360, 0), 2.5f, RotateMode.FastBeyond360)
+                    .SetLoops(-1, LoopType.Restart) // -1 là lặp vô hạn, Restart để bắt đầu vòng mới
+                    .SetEase(Ease.Linear)           // QUAN TRỌNG: Xoay đều, không bị khựng lại mỗi khi hết vòng
+                    .SetLink(interactableObject.gameObject);
+                interactableObject2.GetComponent<Rigidbody>().isKinematic = true;
+                break;
+            case WinzoneType.BucketWater:
+                Transform tf = interactableObject2.transform.GetChild(0);
+                if (tf)
+                {
+                    tf.GetComponent<Rigidbody>().isKinematic = true;
+                    tf.DORotate(new Vector3(0, 0, -60), 0.4f).OnComplete(() =>
+                    {
+                        ParticleSystem par = tf.GetChild(0).GetComponent<ParticleSystem>();
+                        par.Play();
+                        Invoke(nameof(LevelBucketWater), par.main.duration);
+                    });
+                }
+                break;
         }
+        Invoke(nameof(GameComplete), timeDelaywin);
+    }
+
+    public void LevelBucketWater()
+    {
+        ParticelPool particelPool = SimplePool.Spawn<ParticelPool>(PoolType.VFX_Green, interactableObject.transform.position + offSetEffect, Quaternion.Euler(-90, 0, 0));
+        if (particelPool != null) particelPool.PlayVFX();
+        interactableObject.SetActive(true);
+        interactableObject2.SetActive(false);
+    }
+
+    public void GameComplete()
+    {
+        GameController.Instance.GameComplete();
     }
 }

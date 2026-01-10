@@ -13,7 +13,6 @@ public class RagdollDragBodyOnly : MonoBehaviour, IDrag
     public DragType DragType => DragType.Body;
 
     [Header("--- TRẠNG THÁI ---")]
-    [Tooltip("Biến này quyết định có giật về hay không. Gọi hàm DisableSnapBack() để tắt nó.")]
     public bool canSnapBack = true;
 
     [Header("--- LỰC KÉO CHUỘT (DRAG) ---")]
@@ -35,6 +34,7 @@ public class RagdollDragBodyOnly : MonoBehaviour, IDrag
     {
         public float drag;
         public float angularDrag;
+        public Vector3 initialPosition; // [CHANGE] Thêm biến lưu vị trí gốc
     }
 
     private Dictionary<Rigidbody, OriginalState> stateMemory = new Dictionary<Rigidbody, OriginalState>();
@@ -43,7 +43,7 @@ public class RagdollDragBodyOnly : MonoBehaviour, IDrag
     private SpringJoint returnJoint;
     private Rigidbody draggedRb;
 
-    private Vector3 originalWorldPos;
+    private Vector3 originalWorldPos; // Biến này sẽ lấy giá trị từ Dictionary ra
 
     private ConfigurableJoint draggedJoint;
     private JointSnapshot jointSnapshot;
@@ -76,38 +76,26 @@ public class RagdollDragBodyOnly : MonoBehaviour, IDrag
         if (m_cameraFollow != null) m_cameraFollow.UpdateCam();
     }
 
-    // --- HÀM BẠN CẦN GỌI KHI CHIẾN THẮNG ---
-    // Gọi hàm này: GetComponent<RagdollDragBodyOnly>().DisableSnapBack();
     public void DisableSnapBack()
     {
-        // 1. Tắt biến cờ để các lần thả tay sau không bị giật về
         canSnapBack = false;
-
-        // 2. Nếu đang trong quá trình giật về (Routine đang chạy) -> Ngắt ngay lập tức
         if (returnRoutine != null)
         {
             StopCoroutine(returnRoutine);
             returnRoutine = null;
         }
-
-        // 3. Cắt dây lò xo giật về nếu đang có
         if (returnJoint != null)
         {
             Destroy(returnJoint);
             returnJoint = null;
         }
-
-        // 4. Nếu đang giữ chuột (mouseJoint), ta vẫn giữ nguyên để người chơi kéo nốt
-        // Nhưng khi thả tay ra, nó sẽ lọt vào logic 'StopDragAndDrop'
         Debug.Log("Đã tắt chế độ giật về (Win State)");
     }
 
-    // Hàm để bật lại nếu cần (ví dụ Replay)
     public void EnableSnapBack()
     {
         canSnapBack = true;
     }
-    // ------------------------------------------
 
     public void OnDrag()
     {
@@ -155,15 +143,19 @@ public class RagdollDragBodyOnly : MonoBehaviour, IDrag
                 if (foundSpine != null) draggedRb = foundSpine;
                 else draggedRb = hitRb;
 
-                originalWorldPos = draggedRb.position;
-
+                // [CHANGE] LOGIC QUAN TRỌNG Ở ĐÂY
+                // Kiểm tra xem Dictionary đã có thằng này chưa
                 if (!stateMemory.ContainsKey(draggedRb))
                 {
+                    // Nếu chưa có (Lần đầu tiên chạm vào), thì lưu lại
                     OriginalState newState = new OriginalState();
                     newState.drag = draggedRb.linearDamping;
                     newState.angularDrag = draggedRb.angularDamping;
+                    newState.initialPosition = draggedRb.position; // Lưu vị trí hiện tại làm vị trí GỐC
+
                     stateMemory.Add(draggedRb, newState);
 
+                    // Chỉ chụp snapshot Joint lần đầu tiên (nếu cần thiết logic này cũng chỉ nên chạy 1 lần)
                     draggedJoint = draggedRb.GetComponent<ConfigurableJoint>();
                     if (draggedJoint != null)
                     {
@@ -171,6 +163,9 @@ public class RagdollDragBodyOnly : MonoBehaviour, IDrag
                         jointSnapshot.Capture(draggedJoint);
                     }
                 }
+
+                // [CHANGE] Lấy vị trí gốc từ Dictionary ra, thay vì lấy vị trí hiện tại
+                originalWorldPos = stateMemory[draggedRb].initialPosition;
 
                 draggedRb.isKinematic = false;
                 draggedRb.WakeUp();
@@ -203,14 +198,12 @@ public class RagdollDragBodyOnly : MonoBehaviour, IDrag
 
         if (draggedRb != null)
         {
-            // Kiểm tra biến cờ canSnapBack
             if (canSnapBack)
             {
                 returnRoutine = StartCoroutine(SpringSnapBackRoutine(draggedRb));
             }
             else
             {
-                // Nếu đã gọi DisableSnapBack(), thả rơi tự do
                 StopDragAndDrop(draggedRb);
             }
         }
@@ -227,6 +220,7 @@ public class RagdollDragBodyOnly : MonoBehaviour, IDrag
         {
             rb.linearDamping = stateMemory[rb].drag;
             rb.angularDamping = stateMemory[rb].angularDrag;
+            // Không restore position ở đây vì đây là lúc thả tay ra
         }
 
         if (puppetMaster != null) puppetMaster.StiffenMuscle(rb);
@@ -240,6 +234,8 @@ public class RagdollDragBodyOnly : MonoBehaviour, IDrag
         returnJoint = rb.gameObject.AddComponent<SpringJoint>();
         returnJoint.autoConfigureConnectedAnchor = false;
         returnJoint.anchor = Vector3.zero;
+
+        // originalWorldPos lúc này đã là vị trí được lưu từ lần đầu tiên
         returnJoint.connectedAnchor = originalWorldPos;
 
         returnJoint.spring = snapForce * rb.mass;
@@ -253,7 +249,6 @@ public class RagdollDragBodyOnly : MonoBehaviour, IDrag
         {
             timer += Time.deltaTime;
 
-            // Kiểm tra liên tục: Nếu giữa chừng bị gọi DisableSnapBack -> Dừng luôn
             if (!canSnapBack)
             {
                 if (returnJoint != null) Destroy(returnJoint);
@@ -271,7 +266,6 @@ public class RagdollDragBodyOnly : MonoBehaviour, IDrag
 
         if (returnJoint != null) Destroy(returnJoint);
 
-        // Chỉ snap cứng vị trí nếu vẫn được phép snap back
         if (canSnapBack)
         {
             rb.position = originalWorldPos;
@@ -291,6 +285,7 @@ public class RagdollDragBodyOnly : MonoBehaviour, IDrag
             Gizmos.color = Color.green;
             Gizmos.DrawLine(draggedRb.position, mouseJoint.connectedAnchor);
             Gizmos.color = new Color(1, 0, 0, 0.5f);
+            // originalWorldPos này giờ luôn cố định ở vị trí lần đầu tiên
             Gizmos.DrawSphere(originalWorldPos, 0.1f);
         }
 
@@ -302,7 +297,11 @@ public class RagdollDragBodyOnly : MonoBehaviour, IDrag
             Gizmos.DrawLine(draggedRb.position, originalWorldPos);
         }
     }
-
     public void OnActive() { this.enabled = true; }
-    public void OnDeactive() { this.enabled = false; }
+    public void OnDeactive()
+    {
+        stateMemory.Clear();
+        canSnapBack = true;
+        this.enabled = false;
+    }
 }

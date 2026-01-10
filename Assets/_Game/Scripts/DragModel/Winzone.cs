@@ -8,6 +8,8 @@ public enum WinzoneType
     Pin,
     Mask,
     Tablet,
+    Key,
+    BucketWater,
 }
 public class Winzone : MonoBehaviour
 {

@@ -439,6 +439,7 @@ public class RagdollDrag : MonoBehaviour, IDrag
 
     public void OnDeactive()
     {
+        headSnapshots.Clear();
         this.enabled = false;
     }
 }

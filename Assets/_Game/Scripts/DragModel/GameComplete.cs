@@ -19,16 +19,13 @@ public class GameComplete : Winzone
             {
                 if (VFX_Pool != PoolType.None)
                 {
-                    ParticelPool particelPool = SimplePool.Spawn<ParticelPool>(VFX_Pool, contact.point, Quaternion.identity);
+                    ParticelPool particelPool = SimplePool.Spawn<ParticelPool>(VFX_Pool, contact.point + levelprarent.offSetEffect, Quaternion.identity);
                     particelPool.PlayVFX();
                 }
                 otherHead.gameObject.tag = "Complete";
                 gameObject.tag = "Complete";
                 //GameController.Instance.GameComplete();
             }
-            // --- CASE 1: TÔI LÀ VIP & THẮNG (VIP húc Thường) ---
-            levelprarent.RemoveHead(this);
-            levelprarent.RemoveHead(otherHead);
             if (this.isSpecial != otherHead.isSpecial)
             {
                 if (this is GameComplete && otherHead is GameComplete)
@@ -72,6 +69,9 @@ public class GameComplete : Winzone
                     LockHeadToTarget(collision.rigidbody);
                 }
             }
+            // --- CASE 1: TÔI LÀ VIP & THẮNG (VIP húc Thường) ---
+            levelprarent.RemoveHead(this);
+            levelprarent.RemoveHead(otherHead);
         }
     }
 }

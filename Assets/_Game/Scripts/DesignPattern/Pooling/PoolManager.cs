@@ -64,4 +64,5 @@ public enum PoolType
 
     VFX_Electronic,
     VFX_Complete,
+    VFX_Green,
 }
