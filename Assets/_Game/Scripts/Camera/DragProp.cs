@@ -109,6 +109,8 @@ public class DragProp : MonoBehaviour, IDrag
 
             // Giữ dây căng
             mouseJoint.maxDistance = 0.02f;
+
+            Observer.OnDragProp?.Invoke(true);
         }
     }
 
@@ -134,6 +136,7 @@ public class DragProp : MonoBehaviour, IDrag
 
             draggedRb = null;
         }
+        Observer.OnDragProp?.Invoke(false);
     }
 
     // --- INTERFACE ---

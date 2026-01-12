@@ -10,6 +10,8 @@ public enum WinzoneType
     Tablet,
     Key,
     BucketWater,
+
+    Lid,
 }
 public class Winzone : MonoBehaviour
 {

@@ -106,6 +106,9 @@ public class Level : MonoBehaviour
                     });
                 }
                 break;
+            case WinzoneType.Lid:
+                interactableObject.SetActive(true);
+                break;
         }
         Invoke(nameof(GameComplete), timeDelaywin);
     }
