@@ -12,6 +12,9 @@ public enum WinzoneType
     BucketWater,
 
     Lid,
+    Phomai,
+    Chili,
+    Shit,
 }
 public class Winzone : MonoBehaviour
 {
@@ -32,7 +35,7 @@ public class Winzone : MonoBehaviour
 
     protected RagdollDrag dragManager;  // Tham chiếu script kéo chuột
 
-    private CameraFollow cameraFollow;
+    protected CameraFollow cameraFollow;
 
     protected Level levelprarent;
 

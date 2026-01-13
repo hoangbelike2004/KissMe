@@ -1563,13 +1563,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 370d783ace8d94d7f8d18dbbd1da4b4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RagdollPuppetMaster
-  ghostPrefab: {fileID: 919132149155446097, guid: e4f47c1514e0845a7964fb84e7b7f5fd, type: 3}
+  ghostPrefab: {fileID: 3717221219170743709, guid: 1b0e4415c479040ba886be2e252a042f, type: 3}
   hideGhost: 1
+  returnToGhost: 1
   animatedTargetRoot: {fileID: 0}
+  pinTargetBone: {fileID: 0}
   muscleSpring: 1500
   muscleDamper: 50
-  moveSpring: 2000
-  moveDamper: 100
+  legMuscleMultiplier: 10
+  enablePinning: 1
+  pinSpring: 2000
+  pinDamper: 200
+  showDebug: 1
+  ropeColor: {r: 0, g: 1, b: 1, a: 1}
   recoverDuration: 0.5
   limbs: []
 --- !u!1 &1628111691873525015 stripped
@@ -1757,7 +1763,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
@@ -1921,7 +1927,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 24
   m_CollisionDetection: 0
 --- !u!136 &5232660866819288504
 CapsuleCollider:
@@ -5059,7 +5065,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
@@ -5223,7 +5229,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 24
   m_CollisionDetection: 0
 --- !u!136 &5284790014164682360
 CapsuleCollider:
@@ -5265,13 +5271,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 370d783ace8d94d7f8d18dbbd1da4b4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RagdollPuppetMaster
-  ghostPrefab: {fileID: 919132149155446097, guid: 32d7c0c70763447d5adbcea3903bc5d0, type: 3}
+  ghostPrefab: {fileID: 4038193840703803687, guid: 1000c18373d9b47b7a5195555ec2e53b, type: 3}
   hideGhost: 1
+  returnToGhost: 1
   animatedTargetRoot: {fileID: 0}
+  pinTargetBone: {fileID: 0}
   muscleSpring: 1500
   muscleDamper: 50
-  moveSpring: 2000
-  moveDamper: 100
+  legMuscleMultiplier: 10
+  enablePinning: 1
+  pinSpring: 2000
+  pinDamper: 200
+  showDebug: 1
+  ropeColor: {r: 0, g: 1, b: 1, a: 1}
   recoverDuration: 0.5
   limbs: []
 --- !u!1 &7969406364896856819 stripped

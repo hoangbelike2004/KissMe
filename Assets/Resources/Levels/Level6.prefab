@@ -239,9 +239,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level
   dragTypes: 
+  offSetEffect: {x: 0, y: 0, z: 0}
+  timeDelaywin: 0
   distanceCam: 0
   target1: {fileID: 0}
   target2: {fileID: 0}
+  interactableObject: {fileID: 0}
+  interactableObject2: {fileID: 0}
 --- !u!1 &7723289848876192807
 GameObject:
   m_ObjectHideFlags: 0
@@ -599,9 +603,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level
   dragTypes: 02000000
+  offSetEffect: {x: 0, y: 0, z: 0}
+  timeDelaywin: 0
   distanceCam: 3.5
   target1: {fileID: 0}
   target2: {fileID: 0}
+  interactableObject: {fileID: 0}
+  interactableObject2: {fileID: 0}
 --- !u!1001 &3207098407293039778
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -644,7 +652,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 675895a440f0542ccb19ccfa62dde8c3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.0020000003
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 675895a440f0542ccb19ccfa62dde8c3, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1440,9 +1448,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1c9e797e3e54fa09fcd1853de30388, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeadGameplay
+  winzoneType: 0
+  VFX_Pool: 1
   isSpecial: 1
   targetTag: Head
   isGoal: 0
+  isFollow: 1
+  isWinningObject: 1
 --- !u!1 &2324014446934034931 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 675895a440f0542ccb19ccfa62dde8c3, type: 3}
@@ -1462,11 +1474,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RagdollPuppetMaster
   ghostPrefab: {fileID: 4907871465130138532, guid: beee5958f9355436388d90fb683c6293, type: 3}
   hideGhost: 1
+  returnToGhost: 1
   animatedTargetRoot: {fileID: 0}
+  pinTargetBone: {fileID: 0}
   muscleSpring: 1500
   muscleDamper: 50
-  moveSpring: 2000
-  moveDamper: 100
+  legMuscleMultiplier: 10
+  enablePinning: 1
+  pinSpring: 50000
+  pinDamper: 200
+  showDebug: 1
+  ropeColor: {r: 0, g: 1, b: 1, a: 1}
   recoverDuration: 0.5
   limbs: []
 --- !u!1 &2560447845077806601 stripped
@@ -1714,7 +1732,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
@@ -2972,7 +2990,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 675895a440f0542ccb19ccfa62dde8c3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.002
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 675895a440f0542ccb19ccfa62dde8c3, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4405,9 +4423,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1c9e797e3e54fa09fcd1853de30388, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeadGameplay
+  winzoneType: 0
+  VFX_Pool: 1
   isSpecial: 1
   targetTag: Head
   isGoal: 1
+  isFollow: 1
+  isWinningObject: 1
 --- !u!1 &7907643670771082683 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1617399745748130172, guid: 675895a440f0542ccb19ccfa62dde8c3, type: 3}
@@ -4898,11 +4920,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RagdollPuppetMaster
   ghostPrefab: {fileID: 4907871465130138532, guid: beee5958f9355436388d90fb683c6293, type: 3}
   hideGhost: 1
+  returnToGhost: 1
   animatedTargetRoot: {fileID: 0}
+  pinTargetBone: {fileID: 0}
   muscleSpring: 1500
   muscleDamper: 50
-  moveSpring: 2000
-  moveDamper: 100
+  legMuscleMultiplier: 10
+  enablePinning: 1
+  pinSpring: 50000
+  pinDamper: 200
+  showDebug: 1
+  ropeColor: {r: 0, g: 1, b: 1, a: 1}
   recoverDuration: 0.5
   limbs: []
 --- !u!1 &8667610995558258438 stripped
@@ -4933,7 +4961,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1

@@ -246,6 +246,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level
   dragTypes: 0300000001000000
+  offSetEffect: {x: 0, y: 0, z: 0}
+  timeDelaywin: 0
   distanceCam: 3
   target1: {fileID: 0}
   target2: {fileID: 0}
@@ -378,6 +380,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level
   dragTypes: 
+  offSetEffect: {x: 0, y: 0, z: 0}
+  timeDelaywin: 0
   distanceCam: 0
   target1: {fileID: 0}
   target2: {fileID: 0}
@@ -2420,7 +2424,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
@@ -2584,7 +2588,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 120
+  m_Constraints: 72
   m_CollisionDetection: 0
 --- !u!136 &9005673730490593329
 CapsuleCollider:
@@ -2628,11 +2632,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RagdollPuppetMaster
   ghostPrefab: {fileID: 8767310874368521329, guid: cb592fa2b467f40d8825503768686c13, type: 3}
   hideGhost: 1
+  returnToGhost: 1
   animatedTargetRoot: {fileID: 0}
+  pinTargetBone: {fileID: 0}
   muscleSpring: 1500
   muscleDamper: 50
-  moveSpring: 2000
-  moveDamper: 100
+  legMuscleMultiplier: 10
+  enablePinning: 1
+  pinSpring: 2000
+  pinDamper: 200
+  showDebug: 1
+  ropeColor: {r: 0, g: 1, b: 1, a: 1}
   recoverDuration: 0.5
   limbs: []
 --- !u!1 &9133830683059102957 stripped
@@ -4896,11 +4906,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RagdollPuppetMaster
   ghostPrefab: {fileID: 1726037607460603759, guid: c29665ebd46664d83947a52fd32d7305, type: 3}
   hideGhost: 1
+  returnToGhost: 0
   animatedTargetRoot: {fileID: 0}
+  pinTargetBone: {fileID: 0}
   muscleSpring: 1500
   muscleDamper: 50
-  moveSpring: 2000
-  moveDamper: 100
+  legMuscleMultiplier: 10
+  enablePinning: 1
+  pinSpring: 2000
+  pinDamper: 200
+  showDebug: 1
+  ropeColor: {r: 0, g: 1, b: 1, a: 1}
   recoverDuration: 0.5
   limbs: []
 --- !u!1 &8675589770125670995 stripped
@@ -5095,7 +5111,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 120
+  m_Constraints: 72
   m_CollisionDetection: 0
 --- !u!136 &3506650481715460816
 CapsuleCollider:

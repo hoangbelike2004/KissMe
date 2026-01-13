@@ -127,6 +127,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level
   dragTypes: 
+  offSetEffect: {x: 0, y: 0, z: 0}
+  timeDelaywin: 0
   distanceCam: 0
   target1: {fileID: 0}
   target2: {fileID: 0}
@@ -265,6 +267,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level
   dragTypes: 0300000001000000
+  offSetEffect: {x: 0, y: 0, z: 0}
+  timeDelaywin: 0
   distanceCam: 3
   target1: {fileID: 0}
   target2: {fileID: 0}
@@ -822,7 +826,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 76ca29f611691422996ecee8ce163731, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.007
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 76ca29f611691422996ecee8ce163731, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1680,10 +1684,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.03
-  m_Height: 0.1
+  m_Radius: 0.2
+  m_Height: 0.8
   m_Direction: 1
-  m_Center: {x: 0, y: 0.09, z: 0}
+  m_Center: {x: 0, y: 0.4, z: 0}
 --- !u!153 &8804419560174991959
 ConfigurableJoint:
   m_ObjectHideFlags: 0
@@ -1962,11 +1966,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RagdollPuppetMaster
   ghostPrefab: {fileID: 1917553926235934334, guid: 080f4bcbeb586400ea7d253ecdd10b06, type: 3}
   hideGhost: 1
+  returnToGhost: 1
   animatedTargetRoot: {fileID: 0}
+  pinTargetBone: {fileID: 0}
   muscleSpring: 1500
   muscleDamper: 50
-  moveSpring: 2000
-  moveDamper: 100
+  legMuscleMultiplier: 10
+  enablePinning: 1
+  pinSpring: 2000
+  pinDamper: 200
+  showDebug: 1
+  ropeColor: {r: 0, g: 1, b: 1, a: 1}
   recoverDuration: 0.5
   limbs: []
 --- !u!4 &5282262327475619379 stripped
@@ -2004,7 +2014,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 72
   m_CollisionDetection: 0
 --- !u!136 &3515129128796343932
 CapsuleCollider:
@@ -2057,7 +2067,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
@@ -2551,10 +2561,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.03
-  m_Height: 0.1
+  m_Radius: 0.2
+  m_Height: 0.8
   m_Direction: 1
-  m_Center: {x: 0, y: 0.09, z: 0}
+  m_Center: {x: 0, y: 0.4, z: 0}
 --- !u!153 &9164707627936873284
 ConfigurableJoint:
   m_ObjectHideFlags: 0
@@ -2844,7 +2854,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 8
   m_CollisionDetection: 0
 --- !u!135 &6442878234562434226
 SphereCollider:

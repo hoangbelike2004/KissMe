@@ -51,6 +51,13 @@ public class CameraFollow : MonoBehaviour
             winzones.Add(wz);
         }
     }
+    public void RemoveWinzone(Winzone wz)
+    {
+        if (winzones.Contains(wz))
+        {
+            winzones.Remove(wz);
+        }
+    }
 
     public void ClearWinZone()
     {

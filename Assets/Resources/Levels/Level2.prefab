@@ -470,6 +470,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level
   dragTypes: 02000000
+  offSetEffect: {x: 0, y: 0, z: 0}
+  timeDelaywin: 0
   distanceCam: 2
   target1: {fileID: 0}
   target2: {fileID: 0}
@@ -602,6 +604,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level
   dragTypes: 
+  offSetEffect: {x: 0, y: 0, z: 0}
+  timeDelaywin: 0
   distanceCam: 0
   target1: {fileID: 0}
   target2: {fileID: 0}
@@ -1304,9 +1308,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!136 &2206158504294138675
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1617,7 +1621,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
@@ -1780,9 +1784,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 8
-  m_CollisionDetection: 0
+  m_Interpolate: 1
+  m_Constraints: 72
+  m_CollisionDetection: 1
 --- !u!136 &480604885562890963
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1982,11 +1986,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RagdollPuppetMaster
   ghostPrefab: {fileID: 3259841796338863202, guid: 73779afc28e214d448faaac927e50ac7, type: 3}
   hideGhost: 1
+  returnToGhost: 1
   animatedTargetRoot: {fileID: 0}
+  pinTargetBone: {fileID: 0}
   muscleSpring: 1500
-  muscleDamper: 50
-  moveSpring: 5000
-  moveDamper: 100
+  muscleDamper: 100
+  legMuscleMultiplier: 10
+  enablePinning: 1
+  pinSpring: 2000
+  pinDamper: 200
+  showDebug: 1
+  ropeColor: {r: 0, g: 1, b: 1, a: 1}
   recoverDuration: 0.5
   limbs: []
 --- !u!1 &6088905344243240133 stripped
@@ -2506,9 +2516,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!136 &7075098308303607740
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -4210,11 +4220,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RagdollPuppetMaster
   ghostPrefab: {fileID: 3319638143657336145, guid: 55ea37bc6603e405ca378b5bf723711e, type: 3}
   hideGhost: 1
+  returnToGhost: 1
   animatedTargetRoot: {fileID: 0}
+  pinTargetBone: {fileID: 0}
   muscleSpring: 1500
-  muscleDamper: 50
-  moveSpring: 2000
-  moveDamper: 100
+  muscleDamper: 100
+  legMuscleMultiplier: 10
+  enablePinning: 1
+  pinSpring: 2000
+  pinDamper: 200
+  showDebug: 1
+  ropeColor: {r: 0, g: 1, b: 1, a: 1}
   recoverDuration: 0.5
   limbs: []
 --- !u!1 &5962056600197988845 stripped
@@ -4409,7 +4425,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 8
+  m_Constraints: 72
   m_CollisionDetection: 0
 --- !u!136 &3944598087679665687
 CapsuleCollider:
@@ -4462,9 +4478,9 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 8
+  m_Constraints: 0
   m_CollisionDetection: 1
 --- !u!136 &7242903129215171340
 CapsuleCollider:

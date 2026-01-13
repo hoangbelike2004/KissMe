@@ -239,6 +239,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level
   dragTypes: 
+  offSetEffect: {x: 0, y: 0, z: 0}
+  timeDelaywin: 0
   distanceCam: 0
   target1: {fileID: 0}
   target2: {fileID: 0}
@@ -489,6 +491,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level
   dragTypes: 01000000
+  offSetEffect: {x: 0, y: 0, z: 0}
+  timeDelaywin: 0
   distanceCam: 3.5
   target1: {fileID: 2894103533235703115}
   target2: {fileID: 7827505240382531607}
@@ -624,7 +628,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 539945089050908840, guid: a0155435640c74e92bda0ccd07769404, type: 3}
       propertyPath: m_IsKinematic
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1135187548051816378, guid: a0155435640c74e92bda0ccd07769404, type: 3}
       propertyPath: m_Layer
@@ -692,7 +696,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3249331273230767337, guid: a0155435640c74e92bda0ccd07769404, type: 3}
       propertyPath: m_Constraints
-      value: 0
+      value: 112
       objectReference: {fileID: 0}
     - target: {fileID: 3453660303103011009, guid: a0155435640c74e92bda0ccd07769404, type: 3}
       propertyPath: m_Layer
@@ -836,7 +840,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6084295923247025262, guid: a0155435640c74e92bda0ccd07769404, type: 3}
       propertyPath: m_Constraints
-      value: 0
+      value: 112
       objectReference: {fileID: 0}
     - target: {fileID: 6357485898374614146, guid: a0155435640c74e92bda0ccd07769404, type: 3}
       propertyPath: m_Layer
@@ -1019,7 +1023,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4433639730596331993, guid: a505aebd7da2f4131bc4fffb7ef57b44, type: 3}
       propertyPath: m_Constraints
-      value: 0
+      value: 112
       objectReference: {fileID: 0}
     - target: {fileID: 4551177170562153479, guid: a505aebd7da2f4131bc4fffb7ef57b44, type: 3}
       propertyPath: m_Layer
@@ -1075,11 +1079,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5807792446255477038, guid: a505aebd7da2f4131bc4fffb7ef57b44, type: 3}
       propertyPath: m_IsKinematic
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5859794375713541556, guid: a505aebd7da2f4131bc4fffb7ef57b44, type: 3}
       propertyPath: m_Constraints
-      value: 0
+      value: 112
       objectReference: {fileID: 0}
     - target: {fileID: 5920687547872021780, guid: a505aebd7da2f4131bc4fffb7ef57b44, type: 3}
       propertyPath: m_Layer
@@ -1135,7 +1139,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7728616867841333651, guid: a505aebd7da2f4131bc4fffb7ef57b44, type: 3}
       propertyPath: m_Constraints
-      value: 80
+      value: 96
       objectReference: {fileID: 0}
     - target: {fileID: 7728616867841333651, guid: a505aebd7da2f4131bc4fffb7ef57b44, type: 3}
       propertyPath: m_IsKinematic
@@ -1233,6 +1237,10 @@ PrefabInstance:
       propertyPath: ghostPrefab
       value: 
       objectReference: {fileID: 297991637764057561, guid: b270ff470c8854646a34c8698b2f5dfb, type: 3}
+    - target: {fileID: 8818096084413380750, guid: a505aebd7da2f4131bc4fffb7ef57b44, type: 3}
+      propertyPath: muscleSpring
+      value: 3000
+      objectReference: {fileID: 0}
     - target: {fileID: 8865425800210144696, guid: a505aebd7da2f4131bc4fffb7ef57b44, type: 3}
       propertyPath: m_Layer
       value: 6

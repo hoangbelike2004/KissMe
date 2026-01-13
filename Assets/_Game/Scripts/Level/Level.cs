@@ -109,6 +109,19 @@ public class Level : MonoBehaviour
             case WinzoneType.Lid:
                 interactableObject.SetActive(true);
                 break;
+            case WinzoneType.Phomai:
+                interactableObject.tag = "Complete";
+                interactableObject2.transform.DOLocalRotate(
+                    new Vector3(250, 90, -90),
+                    .5f
+                );
+                break;
+            case WinzoneType.Chili:
+                interactableObject.SetActive(false);
+                break;
+            case WinzoneType.Shit:
+                interactableObject2.transform.SetParent(interactableObject.transform);
+                break;
         }
         Invoke(nameof(GameComplete), timeDelaywin);
     }
