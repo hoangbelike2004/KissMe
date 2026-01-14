@@ -24,7 +24,6 @@ public class GameComplete : Winzone
                 }
                 otherHead.gameObject.tag = "Complete";
                 gameObject.tag = "Complete";
-                //GameController.Instance.GameComplete();
             }
             if (this.isSpecial != otherHead.isSpecial)
             {

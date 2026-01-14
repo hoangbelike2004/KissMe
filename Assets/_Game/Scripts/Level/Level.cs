@@ -61,6 +61,7 @@ public class Level : MonoBehaviour
 
     public void ChangeStateWinZone()
     {
+        CameraFollow cam = Camera.main.GetComponent<CameraFollow>();
         switch (winzoneType)
         {
             case WinzoneType.Cake:
@@ -121,6 +122,31 @@ public class Level : MonoBehaviour
                 break;
             case WinzoneType.Shit:
                 interactableObject2.transform.SetParent(interactableObject.transform);
+                break;
+            case WinzoneType.Ballon:
+                interactableObject.SetActive(false);
+                break;
+            case WinzoneType.Fly:
+                RagdollPuppetMaster ragdollPuppetMaster1 = interactableObject.GetComponent<RagdollPuppetMaster>();
+                interactableObject2.gameObject.SetActive(false);
+                ragdollPuppetMaster1.MoveAnchorPosition(new Vector3(0, 50, 0), 75);
+                Winzone winzone = target1.GetComponent<Winzone>();
+                cam.RemoveWinzone(winzone);
+                ParticelPool par = SimplePool.Spawn<ParticelPool>(PoolType.VFX_Fire, target2.transform.position, target2.transform.rotation);
+                par.PlayVFX();
+                par.TF.SetParent(target2);
+                break;
+            case WinzoneType.Rocket:
+                ParticleSystem par2 = interactableObject.transform.GetChild(0).GetComponent<ParticleSystem>();
+                par2.Play();
+                interactableObject.transform.DOMoveY(transform.position.y + 10, 3f).SetLink(interactableObject);
+                cam.RemoveWinzone(interactableObject2.GetComponent<Winzone>());
+                break;
+            case WinzoneType.Coin:
+                interactableObject.SetActive(false);
+                ParticelPool particelPool = SimplePool.Spawn<ParticelPool>(PoolType.VFX_Explode_1,
+                 interactableObject.transform.position + Vector3.up * 0.5f, Quaternion.identity);
+                particelPool.PlayVFX();
                 break;
         }
         Invoke(nameof(GameComplete), timeDelaywin);

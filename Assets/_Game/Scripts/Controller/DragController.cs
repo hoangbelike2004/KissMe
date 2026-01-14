@@ -37,7 +37,7 @@ public class DragController : MonoBehaviour
         currentTypes = newTypes;
         for (int i = 0; i < currentTypes.Count; i++)
         {
-            dragHandlers[currentTypes[i]].OnActive();
+            if (currentTypes[i] != DragType.None) dragHandlers[currentTypes[i]].OnActive();
         }
     }
     void OnEnable()

@@ -15,6 +15,10 @@ public enum WinzoneType
     Phomai,
     Chili,
     Shit,
+    Ballon,
+    Fly,
+    Rocket,
+    Coin,
 }
 public class Winzone : MonoBehaviour
 {
