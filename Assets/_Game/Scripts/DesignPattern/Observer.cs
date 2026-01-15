@@ -9,4 +9,6 @@ public static class Observer
     public static UnityAction<List<DragType>> OnSetDragType;
 
     public static UnityAction<bool> OnDragProp;
+
+    public static UnityAction OnDrawToTaget;
 }

@@ -4598,7 +4598,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 1
-  IsRemoveToWin: 1
+  IsRemoveToWin: 0
   isWinningObject: 1
 --- !u!1 &5493252294028963120 stripped
 GameObject:

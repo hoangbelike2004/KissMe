@@ -41,6 +41,7 @@ public class RagdollPathDrawer : MonoBehaviour
 
     void Update()
     {
+        if (puppetMaster == null) return;
         HandleInput();
     }
 
@@ -166,5 +167,11 @@ public class RagdollPathDrawer : MonoBehaviour
         {
             currentAnchorPos = puppetMaster.GetAnchorPosition();
         }
+    }
+
+    public void SetPuppetMaster(RagdollPuppetMaster ragdollPuppetMaster)
+    {
+        this.puppetMaster = ragdollPuppetMaster;
+        if (puppetMaster != null) currentAnchorPos = puppetMaster.GetAnchorPosition();
     }
 }
