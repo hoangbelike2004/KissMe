@@ -382,7 +382,7 @@ MonoBehaviour:
   dragTypes: 01000000
   offSetEffect: {x: -0.1, y: 0, z: -0.5}
   timeDelaywin: 0
-  distanceCam: 5
+  distanceCam: 4
   target1: {fileID: 0}
   target2: {fileID: 0}
   interactableObject: {fileID: 4083311879937623502}

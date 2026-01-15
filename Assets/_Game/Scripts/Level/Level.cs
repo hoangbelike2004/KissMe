@@ -148,6 +148,15 @@ public class Level : MonoBehaviour
                  interactableObject.transform.position + Vector3.up * 0.5f, Quaternion.identity);
                 particelPool.PlayVFX();
                 break;
+            case WinzoneType.Letter:
+                interactableObject.SetActive(false);
+                interactableObject2.transform.DORotate(Vector3.zero, 0.5f);
+                break;
+            case WinzoneType.Ring:
+                interactableObject.SetActive(true);
+                ParticelPool particelPool2 = SimplePool.Spawn<ParticelPool>(PoolType.VFX_Hearth, interactableObject.transform.position + offSetEffect, Quaternion.Euler(-90, 0, 0));
+                if (particelPool2 != null) particelPool2.PlayVFX();
+                break;
         }
         Invoke(nameof(GameComplete), timeDelaywin);
     }

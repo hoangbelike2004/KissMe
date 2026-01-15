@@ -23,8 +23,12 @@ public class DistanceComplete : Winzone
 
                 if (isGoal)
                 {
-                    ParticelPool particelPool = SimplePool.Spawn<ParticelPool>(VFX_Pool, startPos, Quaternion.Euler(-90, 0, 0));
-                    if (particelPool != null) particelPool.PlayVFX();
+
+                    if (VFX_Pool != PoolType.None)
+                    {
+                        ParticelPool particelPool = SimplePool.Spawn<ParticelPool>(VFX_Pool, startPos, Quaternion.Euler(-90, 0, 0));
+                        if (particelPool != null) particelPool.PlayVFX();
+                    }
                 }
 
                 // --- CASE 1: TÔI LÀ VIP & THẮNG (VIP húc Thường) ---

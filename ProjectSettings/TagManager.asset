@@ -8,6 +8,9 @@ TagManager:
   - Complete
   - BodyPart
   - Prop
+  - Fire
+  - Obstacle
+  - Human
   layers:
   - Default
   - TransparentFX
@@ -18,8 +21,8 @@ TagManager:
   - Ragdoll
   - Head
   - Rock
-  - 
-  - 
+  - Fire
+  - Ground
   - 
   - 
   - 

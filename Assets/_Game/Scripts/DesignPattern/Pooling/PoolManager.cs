@@ -66,4 +66,5 @@ public enum PoolType
     VFX_Complete,
     VFX_Green,
     VFX_Fire,
+    VFX_Coin,
 }

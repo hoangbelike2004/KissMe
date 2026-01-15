@@ -14,6 +14,9 @@ public class RagdollPuppetMaster : MonoBehaviour
     public bool hideGhost = true;
 
     [Header("--- CONTROL (ĐIỀU KHIỂN) ---")]
+    [Tooltip("TRUE: Bắt chước Animation. FALSE: Ngất xỉu/Thả lỏng hoàn toàn.")]
+    public bool mimicAnimation = true;
+
     [Tooltip("TRUE: Lò xo căng (kéo về cọc neo). FALSE: Lò xo lỏng (tự do).")]
     public bool returnToGhost = true;
 
@@ -40,6 +43,7 @@ public class RagdollPuppetMaster : MonoBehaviour
     private SpringJoint pinSpringJoint;
 
     private bool isExternalDragging = false;
+    private bool _lastMimicState;
 
     [Header("--- DEBUG VISUALS ---")]
     public bool showDebug = true;
@@ -47,6 +51,12 @@ public class RagdollPuppetMaster : MonoBehaviour
 
     [Header("--- RECOVERY ---")]
     public float recoverDuration = 0.5f;
+
+    // --- [PHẦN MỚI THÊM 1: Biến lưu vị trí cũ] ---
+    private Vector3 _startPosition;
+    private Quaternion _startRotation;
+    private Rigidbody _hipsRb;
+    // ---------------------------------------------
 
     [System.Serializable]
     public class PuppetLimb
@@ -65,6 +75,20 @@ public class RagdollPuppetMaster : MonoBehaviour
 
     void Start()
     {
+        // --- [PHẦN MỚI THÊM 2: Lưu lại vị trí khi bắt đầu] ---
+        _hipsRb = GetHipsRigidbody();
+        if (_hipsRb != null)
+        {
+            _startPosition = _hipsRb.position;
+            _startRotation = _hipsRb.rotation;
+        }
+        else
+        {
+            _startPosition = transform.position;
+            _startRotation = transform.rotation;
+        }
+        // -----------------------------------------------------
+
         // 1. Setup Ghost và Limbs trước
         if (animatedTargetRoot == null && ghostPrefab != null) SpawnGhost();
         if (animatedTargetRoot != null) SetupLimbs();
@@ -72,11 +96,16 @@ public class RagdollPuppetMaster : MonoBehaviour
         // 2. Setup Pinning (Quan trọng: Phải lấy Hips của nhân vật thật)
         if (enablePinning) SetupPinning();
 
-        Rigidbody hipsRb = GetHipsRigidbody();
+        Rigidbody hipsRb = GetHipsRigidbody(); // (Biến cục bộ này của bạn vẫn giữ nguyên)
         if (hipsRb != null) hipsRb.centerOfMass = new Vector3(0, -0.5f, 0);
 
         SetupRigidbodySettings();
+
+        // Khởi tạo trạng thái ngược lại để Force update lần đầu tiên trong FixedUpdate
+        _lastMimicState = !mimicAnimation;
     }
+
+    // ... (GIỮ NGUYÊN TẤT CẢ CÁC HÀM CŨ CỦA BẠN Ở ĐÂY: SetupRigidbodySettings, GetHipsRigidbody, v.v...) ...
 
     void SetupRigidbodySettings()
     {
@@ -91,7 +120,6 @@ public class RagdollPuppetMaster : MonoBehaviour
 
     Rigidbody GetHipsRigidbody()
     {
-        // Tìm Rigidbody trên chính nhân vật này (Ragdoll)
         var rb = GetComponentInChildren<Rigidbody>();
         if (rb != null && (rb.name.Contains("Hips") || rb.name.Contains("Pelvis"))) return rb;
         var allRbs = GetComponentsInChildren<Rigidbody>();
@@ -105,29 +133,22 @@ public class RagdollPuppetMaster : MonoBehaviour
 
     void SetupPinning()
     {
-        // YÊU CẦU: Lấy vị trí của chính nhân vật (Ragdoll) làm gốc
         Rigidbody hipsRb = GetHipsRigidbody();
-
         if (hipsRb == null)
         {
             Debug.LogError("Vẫn không tìm thấy Rigidbody của nhân vật!");
             return;
         }
 
-        // Tạo một cái Neo (Anchor) vô hình
         GameObject anchorObj = new GameObject("Virtual_Pin_Anchor_FIXED");
-
-        // --- QUAN TRỌNG: Đặt Neo tại vị trí Hips của nhân vật lúc Start ---
         anchorObj.transform.position = hipsRb.position;
         anchorObj.transform.rotation = hipsRb.rotation;
-
         anchorObj.transform.SetParent(transform.root);
 
         pinAnchorRb = anchorObj.AddComponent<Rigidbody>();
-        pinAnchorRb.isKinematic = true; // Neo cứng, không bị vật lý tác động
+        pinAnchorRb.isKinematic = true;
         pinAnchorRb.useGravity = false;
 
-        // Gắn lò xo từ Hips nhân vật vào cái Neo cứng đó
         pinSpringJoint = hipsRb.gameObject.AddComponent<SpringJoint>();
         pinSpringJoint.connectedBody = pinAnchorRb;
 
@@ -135,7 +156,6 @@ public class RagdollPuppetMaster : MonoBehaviour
         pinSpringJoint.anchor = Vector3.zero;
         pinSpringJoint.connectedAnchor = Vector3.zero;
 
-        // Cấu hình lực lò xo ban đầu
         pinSpringJoint.spring = pinSpring;
         pinSpringJoint.damper = pinDamper;
         pinSpringJoint.minDistance = 0;
@@ -152,7 +172,6 @@ public class RagdollPuppetMaster : MonoBehaviour
         Animator ghostAnim = ghostInstance.GetComponent<Animator>();
         if (ghostAnim != null) ghostAnim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
 
-        // --- YÊU CẦU: Chỉ ẩn con cấp 1 (Level 1 Children) ---
         if (hideGhost)
         {
             foreach (Transform child in ghostInstance.transform)
@@ -161,11 +180,8 @@ public class RagdollPuppetMaster : MonoBehaviour
                 if (r != null) r.enabled = false;
             }
         }
-        // ----------------------------------------------------
 
         animatedTargetRoot = ghostInstance.transform;
-
-        // Tìm Hips của Ghost để khớp Animation (Rotation)
         pinTargetBone = FindRecursive(ghostInstance.transform, "Hips");
         if (pinTargetBone == null) pinTargetBone = FindRecursive(ghostInstance.transform, "Pelvis");
 
@@ -237,34 +253,52 @@ public class RagdollPuppetMaster : MonoBehaviour
 
     void FixedUpdate()
     {
-        // --- YÊU CẦU: Neo đứng im, KHÔNG CẬP NHẬT VỊ TRÍ ---
-        // Đã xóa dòng: pinAnchorRb.MovePosition(...) 
-        // Neo sẽ nằm im tại vị trí được tạo ra ở hàm Start.
+        // 1. KIỂM TRA THAY ĐỔI TRẠNG THÁI MIMIC
+        if (mimicAnimation != _lastMimicState)
+        {
+            if (mimicAnimation)
+            {
+                foreach (var limb in limbs)
+                {
+                    float strength = limb.isLeg ? muscleSpring * legMuscleMultiplier : muscleSpring;
+                    SetJointStrength(limb.joint, strength, 0f);
+                }
+            }
+            else
+            {
+                foreach (var limb in limbs)
+                {
+                    SetJointStrength(limb.joint, 0f, 0f);
+                }
+            }
+            _lastMimicState = mimicAnimation;
+        }
 
-        // Chỉ xử lý lực lò xo:
+        // 2. XỬ LÝ PINNING (NEO)
         if (enablePinning && pinSpringJoint != null && !isExternalDragging)
         {
             if (returnToGhost)
             {
-                // Bật lực kéo: Nhân vật bị giữ lại quanh cái Neo cố định
                 pinSpringJoint.spring = pinSpring;
                 pinSpringJoint.damper = pinDamper;
             }
             else
             {
-                // Tắt lực kéo: Nhân vật tự do đi lại (tạm thời cắt dây)
                 pinSpringJoint.spring = 0;
                 pinSpringJoint.damper = 0;
             }
         }
 
-        // 2. Cập nhật Rotation khớp xương (Để nhân vật vẫn múa may theo Animation)
-        foreach (var limb in limbs)
+        // 3. CẬP NHẬT GÓC XOAY (CHỈ KHI ĐANG MIMIC)
+        if (mimicAnimation)
         {
-            if (limb.joint == null || limb.targetBone == null) continue;
-            if (limb.isDragging) continue;
+            foreach (var limb in limbs)
+            {
+                if (limb.joint == null || limb.targetBone == null) continue;
+                if (limb.isDragging) continue;
 
-            limb.joint.targetRotation = Quaternion.Inverse(limb.targetBone.localRotation) * limb.initialRotation;
+                limb.joint.targetRotation = Quaternion.Inverse(limb.targetBone.localRotation) * limb.initialRotation;
+            }
         }
     }
 
@@ -290,8 +324,11 @@ public class RagdollPuppetMaster : MonoBehaviour
             if (foundLimb == null) return;
 
             foundLimb.isDragging = false;
-            float targetAng = foundLimb.isLeg ? muscleSpring * legMuscleMultiplier : muscleSpring;
-            StartCoroutine(SmoothReturnRoutine(j, targetAng, 0f, recoverDuration));
+            if (mimicAnimation)
+            {
+                float targetAng = foundLimb.isLeg ? muscleSpring * legMuscleMultiplier : muscleSpring;
+                StartCoroutine(SmoothReturnRoutine(j, targetAng, 0f, recoverDuration));
+            }
         }
     }
 
@@ -302,6 +339,8 @@ public class RagdollPuppetMaster : MonoBehaviour
         while (timer < duration)
         {
             if (joint == null) yield break;
+            if (!mimicAnimation) yield break;
+
             timer += Time.fixedDeltaTime;
             float t = timer / duration;
             float smoothT = Mathf.SmoothStep(0, 1, t);
@@ -309,7 +348,7 @@ public class RagdollPuppetMaster : MonoBehaviour
             SetJointStrength(joint, currentAng, 0);
             yield return new WaitForFixedUpdate();
         }
-        if (joint != null) SetJointStrength(joint, targetAngSpring, 0);
+        if (joint != null && mimicAnimation) SetJointStrength(joint, targetAngSpring, 0);
     }
 
     void SetJointStrength(ConfigurableJoint joint, float angularSpring, float linearSpring)
@@ -328,8 +367,6 @@ public class RagdollPuppetMaster : MonoBehaviour
         return null;
     }
 
-    // --- HÀM GIAO TIẾP BÊN NGOÀI ---
-
     public void LoosenPin()
     {
         isExternalDragging = true;
@@ -343,7 +380,6 @@ public class RagdollPuppetMaster : MonoBehaviour
     public void TightenPin()
     {
         isExternalDragging = false;
-        // Logic sẽ tự động được FixedUpdate xử lý dựa trên biến returnToGhost
     }
 
     public void StopReturning()
@@ -361,18 +397,69 @@ public class RagdollPuppetMaster : MonoBehaviour
         returnToGhost = true;
     }
 
-    //ham dung de di chuyen đến vị trí offset và thay đổi tốc độ giựt
     public void MoveAnchorPosition(Vector3 newPosition, float pinSpring)
     {
         if (pinAnchorRb != null)
         {
             this.pinSpring = pinSpring;
             pinAnchorRb.transform.position += newPosition;
-
-            // Bật lại lực kéo nếu đang bị tắt
             returnToGhost = true;
         }
     }
+
+    public void SetAnchorPosition(Vector3 targetPosition)
+    {
+        if (pinAnchorRb != null)
+        {
+            pinAnchorRb.MovePosition(targetPosition);
+            returnToGhost = true;
+            pinSpringJoint.spring = pinSpring;
+            pinSpringJoint.damper = pinDamper;
+        }
+    }
+
+    public Vector3 GetAnchorPosition()
+    {
+        if (pinAnchorRb != null)
+        {
+            return pinAnchorRb.position;
+        }
+        return transform.position;
+    }
+
+    // --- [PHẦN MỚI THÊM 3: Hàm Reset] ---
+    public void ResetToStart()
+    {
+        // 1. Reset vị trí cái Neo (nếu có)
+        if (pinAnchorRb != null)
+        {
+            pinAnchorRb.transform.position = _startPosition;
+            pinAnchorRb.transform.rotation = _startRotation;
+            pinAnchorRb.linearVelocity = Vector3.zero; // Cắt quán tính
+
+            // Bật lại lực kéo
+            returnToGhost = true;
+            if (pinSpringJoint != null) pinSpringJoint.spring = pinSpring;
+        }
+
+        // 2. Reset nhân vật vật lý
+        if (_hipsRb != null)
+        {
+            _hipsRb.position = _startPosition;
+            _hipsRb.rotation = _startRotation;
+            _hipsRb.linearVelocity = Vector3.zero; // Cắt quán tính (dùng .linearVelocity nếu là Unity 6)
+            _hipsRb.angularVelocity = Vector3.zero;
+        }
+
+        // 3. Reset Ghost Animation (Để nó không chạy lệch pha)
+        if (animatedTargetRoot != null)
+        {
+            animatedTargetRoot.position = _startPosition;
+            animatedTargetRoot.rotation = _startRotation;
+        }
+    }
+    // -------------------------------------
+
     void OnDrawGizmos()
     {
         if (!showDebug) return;
@@ -381,8 +468,6 @@ public class RagdollPuppetMaster : MonoBehaviour
         {
             Gizmos.color = ropeColor;
             Gizmos.DrawLine(pinSpringJoint.transform.position, pinAnchorRb.position);
-
-            // Vẽ cái Neo cố định
             Gizmos.color = Color.red;
             Gizmos.DrawCube(pinAnchorRb.position, Vector3.one * 0.2f);
         }

@@ -19,6 +19,8 @@ public enum WinzoneType
     Fly,
     Rocket,
     Coin,
+    Letter,
+    Ring,
 }
 public class Winzone : MonoBehaviour
 {
@@ -34,6 +36,8 @@ public class Winzone : MonoBehaviour
     public bool isGoal = false;// phan biet doi tuong chien thang
 
     public bool isFollow = true;// cam se theo doi
+
+    public bool IsRemoveToWin = true;
 
     public bool isWinningObject = true;// phan biet doi tuong can tuong tac de chien thang
 
@@ -62,7 +66,7 @@ public class Winzone : MonoBehaviour
 
         if (cameraFollow != null && isFollow) cameraFollow.AddWinzone(this);
 
-        if (transform.root.GetComponent<Level>() != null)
+        if (transform.root.GetComponent<Level>() != null && IsRemoveToWin)
         {
             levelprarent = transform.root.GetComponent<Level>();
             levelprarent.AddHead(this);
