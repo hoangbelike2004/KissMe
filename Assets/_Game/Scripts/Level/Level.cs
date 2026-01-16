@@ -157,6 +157,17 @@ public class Level : MonoBehaviour
                 ParticelPool particelPool2 = SimplePool.Spawn<ParticelPool>(PoolType.VFX_Hearth, interactableObject.transform.position + offSetEffect, Quaternion.Euler(-90, 0, 0));
                 if (particelPool2 != null) particelPool2.PlayVFX();
                 break;
+            case WinzoneType.Sperm:
+                interactableObject.SetActive(true);
+                interactableObject2.SetActive(false);
+                break;
+            case WinzoneType.Hand:
+                interactableObject.transform.GetChild(0).GetComponent<Rigidbody>().isKinematic = true;
+                interactableObject.transform.GetChild(1).GetComponent<Rigidbody>().isKinematic = true;
+                ParticelPool particelPool3 = SimplePool.Spawn<ParticelPool>(PoolType.VFX_Explode_1, interactableObject.transform.position + offSetEffect, Quaternion.Euler(-90, 0, 0));
+                if (particelPool3 != null) particelPool3.PlayVFX();
+                interactableObject2.SetActive(false);
+                break;
         }
         Invoke(nameof(GameComplete), timeDelaywin);
     }

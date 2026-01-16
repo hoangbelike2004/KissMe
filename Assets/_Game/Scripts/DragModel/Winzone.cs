@@ -21,6 +21,8 @@ public enum WinzoneType
     Coin,
     Letter,
     Ring,
+    Sperm,
+    Hand,
 }
 public class Winzone : MonoBehaviour
 {

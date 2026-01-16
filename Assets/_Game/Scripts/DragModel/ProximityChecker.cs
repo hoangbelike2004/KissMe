@@ -17,9 +17,10 @@ public class ProximityChecker : Winzone
     {
         while (true)
         {
+            Debug.Log(Vector3.Distance(transform.position, tf2.position));
             if (Vector3.Distance(transform.position, tf2.position) < distance)
             {
-                if (isGoal)
+                if (isGoal && VFX_Pool != PoolType.None)
                 {
                     ParticelPool particelPool = SimplePool.Spawn<ParticelPool>(VFX_Pool, transform.position, Quaternion.Euler(-90, 0, 0));
                     if (particelPool != null) particelPool.PlayVFX();

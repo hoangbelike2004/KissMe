@@ -12,7 +12,8 @@ public class DrawController : MonoBehaviour
 
     public void SetPuppetMaster()
     {
-        ragdollPathDrawer.SetPuppetMaster(puppetMaster1);
+        ragdollPathDrawer.ResetDrawing();
+        ragdollPathDrawer.SetPuppetMaster(puppetMaster2);
     }
     void OnEnable()
     {
