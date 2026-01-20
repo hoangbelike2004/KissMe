@@ -9,7 +9,6 @@ public class RazorZone : Winzone
 
     public override void CheckCollision(Collision collision)
     {
-        Debug.Log(1);
         if (collision.collider.CompareTag(targetTag))
         {
             levelprarent.RemoveHead(this);

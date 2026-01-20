@@ -237,14 +237,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 588e910aa48d84392b2dbc06825cf703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RagdollPathDrawer
+  currentMode: 0
   puppetMaster: {fileID: 1560607678291573995}
-  drawLayer:
+  interactLayer:
     serializedVersion: 2
     m_Bits: 1024
   minDistanceBetweenPoints: 0.2
   lineOffset: 0.05
+  lineWidth: 0.2
   moveSpeed: 5
   stoppingDistance: 0.1
+  springStrength: 100
+  springDamper: 0.2
 --- !u!1 &3327460373932681839
 GameObject:
   m_ObjectHideFlags: 0

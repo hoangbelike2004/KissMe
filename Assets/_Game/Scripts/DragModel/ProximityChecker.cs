@@ -17,7 +17,6 @@ public class ProximityChecker : Winzone
     {
         while (true)
         {
-            Debug.Log(Vector3.Distance(transform.position, tf2.position));
             if (Vector3.Distance(transform.position, tf2.position) < distance)
             {
                 if (isGoal && VFX_Pool != PoolType.None)

@@ -168,6 +168,15 @@ public class Level : MonoBehaviour
                 if (particelPool3 != null) particelPool3.PlayVFX();
                 interactableObject2.SetActive(false);
                 break;
+            case WinzoneType.Face_Mask:
+                interactableObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+                interactableObject2.GetComponent<RagdollPuppetMaster>().enabled = true;
+                break;
+            case WinzoneType.Connect1:
+                interactableObject.SetActive(true);
+                ParticelPool particelPool4 = SimplePool.Spawn<ParticelPool>(PoolType.VFX_Complete, interactableObject.transform.position + offSetEffect, Quaternion.Euler(-90, 0, 0));
+                if (particelPool4 != null) particelPool4.PlayVFX();
+                break;
         }
         Invoke(nameof(GameComplete), timeDelaywin);
     }

@@ -23,6 +23,8 @@ public enum WinzoneType
     Ring,
     Sperm,
     Hand,
+    Face_Mask,
+    Connect1,
 }
 public class Winzone : MonoBehaviour
 {
