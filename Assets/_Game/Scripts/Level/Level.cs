@@ -177,6 +177,12 @@ public class Level : MonoBehaviour
                 ParticelPool particelPool4 = SimplePool.Spawn<ParticelPool>(PoolType.VFX_Complete, interactableObject.transform.position + offSetEffect, Quaternion.Euler(-90, 0, 0));
                 if (particelPool4 != null) particelPool4.PlayVFX();
                 break;
+            case WinzoneType.Fan:
+                RagdollPuppetMaster ragdollPuppetMaster2 = interactableObject.GetComponent<RagdollPuppetMaster>();
+                ragdollPuppetMaster2.MoveAnchorPosition(Vector3.left * 1.5f, 1000);
+                Camera.main.GetComponent<CameraFollow>().RemoveWinzone(interactableObject2.GetComponent<Winzone>());
+                break;
+
         }
         Invoke(nameof(GameComplete), timeDelaywin);
     }

@@ -1167,7 +1167,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameController
   waitTimeLoadLevel: 3
-  currentLevel: 36
+  currentLevel: 69
   canvasGameplay: {fileID: 1363529724}
   canvasTutorial: {fileID: 1185179549}
 --- !u!4 &1395095815

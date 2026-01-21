@@ -17,6 +17,10 @@ public class GameComplete : Winzone
             if (!isGoal && !otherHead.isGoal) return;
             if (isGoal)
             {
+                if (WinzoneType.Booling == winzoneType)
+                {
+                    collision.gameObject.SetActive(false);
+                }
                 if (VFX_Pool != PoolType.None)
                 {
                     ParticelPool particelPool = SimplePool.Spawn<ParticelPool>(VFX_Pool, contact.point + levelprarent.offSetEffect, Quaternion.identity);

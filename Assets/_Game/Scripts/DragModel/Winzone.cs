@@ -25,6 +25,8 @@ public enum WinzoneType
     Hand,
     Face_Mask,
     Connect1,
+    Booling,
+    Fan,
 }
 public class Winzone : MonoBehaviour
 {
