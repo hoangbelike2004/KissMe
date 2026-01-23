@@ -17,9 +17,14 @@ public class GameComplete : Winzone
             if (!isGoal && !otherHead.isGoal) return;
             if (isGoal)
             {
-                if (WinzoneType.Booling == winzoneType)
+                if (WinzoneType.Booling == winzoneType || WinzoneType.Tooth_brush == winzoneType)
                 {
                     collision.gameObject.SetActive(false);
+                }
+                else if (winzoneType == WinzoneType.Son)
+                {
+                    collision.gameObject.GetComponent<MeshCollider>().enabled = false;
+                    collision.gameObject.GetComponent<MeshRenderer>().enabled = true;
                 }
                 if (VFX_Pool != PoolType.None)
                 {

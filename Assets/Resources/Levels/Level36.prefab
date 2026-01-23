@@ -374,6 +374,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 1
   isFollow: 1
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &8106377902111752744
 GameObject:
@@ -727,6 +728,14 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Head
       objectReference: {fileID: 0}
+    - target: {fileID: -8782575474319214618, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8705894929361786123, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.007
+      objectReference: {fileID: 0}
     - target: {fileID: -8698470576424737343, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -787,6 +796,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8502535294776534903, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.007
+      objectReference: {fileID: 0}
+    - target: {fileID: -8417805492720617691, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -7743137388203335142, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -794,6 +811,18 @@ PrefabInstance:
     - target: {fileID: -7743137388203335142, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
       propertyPath: m_TagString
       value: Head
+      objectReference: {fileID: 0}
+    - target: {fileID: -7733804954896635556, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.007
+      objectReference: {fileID: 0}
+    - target: {fileID: -7591981299491171099, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.007
+      objectReference: {fileID: 0}
+    - target: {fileID: -7416467994926027068, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -6967334582677905368, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
       propertyPath: m_IsActive
@@ -803,6 +832,54 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Head
       objectReference: {fileID: 0}
+    - target: {fileID: -6314755174759648649, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.0077
+      objectReference: {fileID: 0}
+    - target: {fileID: -4945884251086984842, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4615162929534752202, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.007
+      objectReference: {fileID: 0}
+    - target: {fileID: -4496269009589814618, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.0077
+      objectReference: {fileID: 0}
+    - target: {fileID: -4444757557341933085, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3692207703130630452, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3626512738627699000, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -2687738304594023764, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -2380476629307200845, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -2009262110456653758, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.0081
+      objectReference: {fileID: 0}
+    - target: {fileID: -1887728058136815499, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1708285568446500675, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -1706281726356977347, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -810,6 +887,14 @@ PrefabInstance:
     - target: {fileID: -1706281726356977347, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
       propertyPath: m_TagString
       value: Head
+      objectReference: {fileID: 0}
+    - target: {fileID: -1205365637364459895, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.007
+      objectReference: {fileID: 0}
+    - target: {fileID: -1013388863785465728, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -1005454880010303733, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
       propertyPath: m_IsActive
@@ -827,6 +912,14 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Head
       objectReference: {fileID: 0}
+    - target: {fileID: -579031633276457127, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.007
+      objectReference: {fileID: 0}
+    - target: {fileID: -318570199914558493, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -62674637210528160, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -834,6 +927,14 @@ PrefabInstance:
     - target: {fileID: -62674637210528160, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
       propertyPath: m_TagString
       value: Head
+      objectReference: {fileID: 0}
+    - target: {fileID: 100315000789330653, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.007
+      objectReference: {fileID: 0}
+    - target: {fileID: 363043891833580135, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.007
       objectReference: {fileID: 0}
     - target: {fileID: 655782560541747652, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
       propertyPath: m_IsActive
@@ -879,6 +980,14 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Head
       objectReference: {fileID: 0}
+    - target: {fileID: 2064955558685788023, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.007
+      objectReference: {fileID: 0}
+    - target: {fileID: 3332135724451883858, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5025118322613479408, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -887,6 +996,14 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Head
       objectReference: {fileID: 0}
+    - target: {fileID: 5146087457560111230, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.007
+      objectReference: {fileID: 0}
+    - target: {fileID: 5391608625277710194, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.007
+      objectReference: {fileID: 0}
     - target: {fileID: 5402547914599594613, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -894,6 +1011,30 @@ PrefabInstance:
     - target: {fileID: 5402547914599594613, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
       propertyPath: m_TagString
       value: Head
+      objectReference: {fileID: 0}
+    - target: {fileID: 6153106904560181176, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.0077
+      objectReference: {fileID: 0}
+    - target: {fileID: 6369058894246218000, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.007
+      objectReference: {fileID: 0}
+    - target: {fileID: 6773923599204612690, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7135133438124900215, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.007
+      objectReference: {fileID: 0}
+    - target: {fileID: 7147080227565978602, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7154735124756624586, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7329004160854845535, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
       propertyPath: m_IsActive
@@ -918,6 +1059,10 @@ PrefabInstance:
     - target: {fileID: 8777469213045361839, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
       propertyPath: m_TagString
       value: Head
+      objectReference: {fileID: 0}
+    - target: {fileID: 8957476620958326463, guid: a92535f1df4d74ec7aae45a2b7aa39e3, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -1159,6 +1304,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &387134050795220071 stripped
 GameObject:
@@ -1231,6 +1377,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!4 &404490792864984653 stripped
 Transform:
@@ -1308,6 +1455,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &1020138601212555659 stripped
 GameObject:
@@ -1380,6 +1528,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &1287641913542566184 stripped
 GameObject:
@@ -1452,6 +1601,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &1601861468301129395 stripped
 GameObject:
@@ -1524,6 +1674,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &1629576102567963580 stripped
 GameObject:
@@ -1596,6 +1747,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &1871804558947414132 stripped
 GameObject:
@@ -1668,6 +1820,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &2114648220522981774 stripped
 GameObject:
@@ -1740,6 +1893,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &5164359092830056022 stripped
 GameObject:
@@ -1812,6 +1966,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &5255146553477379027 stripped
 GameObject:
@@ -1884,6 +2039,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &7467646798891557369 stripped
 GameObject:
@@ -1956,6 +2112,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &7657705453876396187 stripped
 GameObject:
@@ -2028,6 +2185,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &7672552701029415964 stripped
 GameObject:
@@ -2100,6 +2258,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &8078432281323294381 stripped
 GameObject:
@@ -2172,6 +2331,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &8555659169719954327 stripped
 GameObject:
@@ -2244,6 +2404,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &8923995878572705033 stripped
 GameObject:
@@ -2316,6 +2477,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &9022652861573275590 stripped
 GameObject:
@@ -2388,6 +2550,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1001 &4812814107927716830
 PrefabInstance:

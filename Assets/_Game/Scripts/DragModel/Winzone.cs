@@ -27,6 +27,10 @@ public enum WinzoneType
     Connect1,
     Booling,
     Fan,
+    Hammer,
+    Tooth_brush,
+    Son,
+    Hearth,
 }
 public class Winzone : MonoBehaviour
 {

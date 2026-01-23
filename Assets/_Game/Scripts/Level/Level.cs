@@ -182,6 +182,9 @@ public class Level : MonoBehaviour
                 ragdollPuppetMaster2.MoveAnchorPosition(Vector3.left * 1.5f, 1000);
                 Camera.main.GetComponent<CameraFollow>().RemoveWinzone(interactableObject2.GetComponent<Winzone>());
                 break;
+            case WinzoneType.Hammer:
+                interactableObject.gameObject.SetActive(false);
+                break;
 
         }
         Invoke(nameof(GameComplete), timeDelaywin);

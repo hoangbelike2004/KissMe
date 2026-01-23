@@ -494,7 +494,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5b07c9736e09c42bb8d17b8ed7e57a16, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 93734637bbce640dc9b5b5b583ad1a23, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1167,7 +1167,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameController
   waitTimeLoadLevel: 3
-  currentLevel: 69
+  currentLevel: 73
   canvasGameplay: {fileID: 1363529724}
   canvasTutorial: {fileID: 1185179549}
 --- !u!4 &1395095815
@@ -1477,8 +1477,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Level 1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 6d59c579256a4491ab0ed6d20d71b55e, type: 2}
+  m_sharedMaterial: {fileID: -2905604907897931210, guid: 6d59c579256a4491ab0ed6d20d71b55e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1657,7 +1657,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 347fe7d53b2ec48ec929053d9eec6b74, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 00cc5508887464370830c32cd621bf26, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

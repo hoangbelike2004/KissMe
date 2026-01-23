@@ -24,6 +24,11 @@ public class ProximityChecker : Winzone
                     ParticelPool particelPool = SimplePool.Spawn<ParticelPool>(VFX_Pool, transform.position, Quaternion.Euler(-90, 0, 0));
                     if (particelPool != null) particelPool.PlayVFX();
                 }
+                if (WinzoneType.Hearth == winzoneType)
+                {
+                    gameObject.tag = "Complete";
+                    Observer.OnStopDragProp?.Invoke();
+                }
                 Observer.OnDrawToTaget?.Invoke();
                 levelprarent.RemoveHead(this);
                 break;
