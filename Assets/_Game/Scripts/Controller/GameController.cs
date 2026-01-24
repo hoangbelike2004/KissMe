@@ -25,6 +25,10 @@ public class GameController : Singleton<GameController>
         gameSetting = Resources.Load<GameSetting>(Constants.KEY_LOAD_GAME_SETTING);
         GameObject[] gameObjects = Resources.LoadAll<GameObject>("Levels");
         maxLevel = gameObjects.Length;
+        if (PlayerPrefs.HasKey(Constants.KEY_SAVE_DATA))
+        {
+            currentLevel = PlayerPrefs.GetInt(Constants.KEY_SAVE_DATA);
+        }
     }
     void Start()
     {
@@ -91,6 +95,22 @@ public class GameController : Singleton<GameController>
         if (gameSetting.isVibrate)
         {
             HapticFeedback.LightFeedback();
+        }
+    }
+
+    public void SaveData()
+    {
+        PlayerPrefs.SetInt(Constants.KEY_SAVE_DATA, currentLevel);
+    }
+    private void OnApplicationQuit()
+    {
+        SaveData();
+    }
+    private void OnApplicationPause(bool pause)
+    {
+        if (pause)
+        {
+            SaveData();
         }
     }
 }
