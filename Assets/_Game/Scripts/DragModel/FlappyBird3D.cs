@@ -7,18 +7,19 @@ public class FlappyBird3D : MonoBehaviour
     public float forwardSpeed = 5f;
 
     [Header("--- TRẠNG THÁI ---")]
-    public bool isWon = false; // Biến kiểm tra thắng
+    public bool isWon = false;
+
+    // [MỚI] Biến kiểm tra xem game đã bắt đầu chưa
+    public bool isGameStarted = false;
 
     private Rigidbody rb;
     private bool jumpRequest = false;
     private CameraFollow cameraFollow;
-    private Vector3 startPos; // Biến lưu vị trí ban đầu để hồi sinh
+    private Vector3 startPos;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-
-        // 1. Lưu lại vị trí xuất phát ngay lúc vào game
         startPos = transform.position;
 
         if (Camera.main != null)
@@ -28,23 +29,35 @@ public class FlappyBird3D : MonoBehaviour
 
         rb.constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+
+        // [MỚI] Gọi hàm Reset ngay từ đầu để tắt trọng lực
+        ResetToStartState();
     }
 
     void Update()
     {
-        // 2. Nếu đã thắng (isWon = true) thì return luôn -> KHÔNG CHO ẤN NỮA
         if (isWon) return;
 
+        // Kiểm tra input
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
         {
+            // [MỚI] Nếu game chưa bắt đầu thì kích hoạt game
+            if (!isGameStarted)
+            {
+                StartGame();
+            }
+
+            // Ghi nhận lệnh nhảy
             jumpRequest = true;
         }
     }
 
     void FixedUpdate()
     {
-        // Nếu thắng rồi thì dừng logic bay
         if (isWon) return;
+
+        // [MỚI] Nếu game CHƯA bắt đầu thì không làm gì cả (đứng yên)
+        if (!isGameStarted) return;
 
         // Bay thẳng trục X
         rb.linearVelocity = new Vector3(forwardSpeed, rb.linearVelocity.y, 0);
@@ -58,10 +71,27 @@ public class FlappyBird3D : MonoBehaviour
 
     void LateUpdate()
     {
+        // Camera chỉ chạy theo nếu chưa thắng (và game đã bắt đầu nếu muốn camera đứng yên lúc đầu)
         if (cameraFollow != null && !isWon)
         {
             cameraFollow.UpdateCam();
         }
+    }
+
+    // [MỚI] Hàm bắt đầu game (khi nhấn lần đầu)
+    void StartGame()
+    {
+        isGameStarted = true;
+        rb.useGravity = true; // Bắt đầu cho phép rơi
+    }
+
+    // [MỚI] Hàm đưa trạng thái về lúc chưa chơi (treo lơ lửng)
+    void ResetToStartState()
+    {
+        isGameStarted = false;
+        rb.useGravity = false; // Tắt trọng lực để không rơi
+        rb.linearVelocity = Vector3.zero; // Dừng mọi chuyển động
+        transform.position = startPos; // Về vị trí cũ
     }
 
     void Jump()
@@ -72,18 +102,14 @@ public class FlappyBird3D : MonoBehaviour
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
 
-    // --- XỬ LÝ VA CHẠM (LOGIC BẠN YÊU CẦU) ---
     void OnCollisionEnter(Collision collision)
     {
-        // Nếu đã thắng rồi thì bỏ qua mọi va chạm khác
         if (isWon) return;
 
-        // A. ĐIỀU KIỆN THẮNG: Va chạm với vật có Tag là "Head"
         if (collision.gameObject.CompareTag("Head"))
         {
             WinGame();
         }
-        // B. ĐIỀU KIỆN THUA: Va chạm với bất cứ cái gì khác (Cống, Đất...)
         else
         {
             ResetToStart();
@@ -93,26 +119,17 @@ public class FlappyBird3D : MonoBehaviour
     void WinGame()
     {
         isWon = true;
-
-        // Dừng mọi chuyển động vật lý ngay lập tức
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-
-        // Bật Kinematic để chim đứng im, không bị rớt hay đẩy đi nữa
         rb.isKinematic = true;
-
         Debug.Log("WIN! Đã chạm vào Head.");
     }
 
     void ResetToStart()
     {
-        // 1. Dịch chuyển tức thời về vị trí cũ (vị trí lúc Start)
-        transform.position = startPos;
+        // [MỚI] Thay vì chỉ reset vị trí, ta gọi hàm ResetToStartState để tắt trọng lực luôn
+        ResetToStartState();
 
-        // 2. Reset vận tốc về 0 để không bị quán tính cũ làm loạn nhịp
-        rb.linearVelocity = Vector3.zero;
-
-        // Chim sẽ tự động tiếp tục bay về trước nhờ logic trong FixedUpdate
-        Debug.Log("Thua! Quay lại từ đầu.");
+        Debug.Log("Thua! Quay lại từ đầu và chờ nhấn.");
     }
 }

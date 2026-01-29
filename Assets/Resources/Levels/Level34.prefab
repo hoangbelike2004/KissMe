@@ -157,7 +157,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1899836195297509635
 Transform:
   m_ObjectHideFlags: 0
@@ -1024,6 +1024,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RagdollPuppetMaster
   ghostPrefab: {fileID: 4038193840703803687, guid: 1000c18373d9b47b7a5195555ec2e53b, type: 3}
   hideGhost: 1
+  mimicAnimation: 1
   returnToGhost: 1
   animatedTargetRoot: {fileID: 0}
   pinTargetBone: {fileID: 0}
@@ -1367,6 +1368,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 1
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &3304757705261403879 stripped
 GameObject:
@@ -3053,6 +3055,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RagdollPuppetMaster
   ghostPrefab: {fileID: 0}
   hideGhost: 1
+  mimicAnimation: 1
   returnToGhost: 1
   animatedTargetRoot: {fileID: 0}
   pinTargetBone: {fileID: 0}
@@ -3710,6 +3713,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 1
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &4081702260299095257 stripped
 GameObject:

@@ -5332,7 +5332,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3191727022583044995
 Transform:
   m_ObjectHideFlags: 0
@@ -5577,6 +5577,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 1
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!54 &6494278940894811536
 Rigidbody:
@@ -5827,6 +5828,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 1
   isFollow: 1
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!54 &3267342366607160342
 Rigidbody:

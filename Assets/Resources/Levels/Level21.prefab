@@ -19,7 +19,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2512118149401157060
 Transform:
   m_ObjectHideFlags: 0
@@ -377,6 +377,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &5444336053997598663
 GameObject:
@@ -509,6 +510,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &5695491567229099477
 GameObject:
@@ -899,6 +901,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1 &8176623903426590575
 GameObject:
@@ -1143,6 +1146,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 1
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!54 &2058830863997413616
 Rigidbody:
@@ -1297,6 +1301,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 1
   isFollow: 1
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!54 &8258380218533684958
 Rigidbody:
@@ -1572,6 +1577,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 1
   isFollow: 1
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!54 &7200415432921145816
 Rigidbody:

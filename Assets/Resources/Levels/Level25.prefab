@@ -131,7 +131,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &626493274581308064
 Transform:
   m_ObjectHideFlags: 0
@@ -790,6 +790,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1001 &410435322811310281
 PrefabInstance:
@@ -949,6 +950,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1001 &461941696841622887
 PrefabInstance:
@@ -1108,6 +1110,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1001 &768838125844562694
 PrefabInstance:
@@ -1262,6 +1265,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!4 &946265334028133613 stripped
 Transform:
@@ -1421,6 +1425,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!4 &646842163488461836 stripped
 Transform:
@@ -1585,6 +1590,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1001 &1467666079453850100
 PrefabInstance:
@@ -1744,6 +1750,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1001 &2185227224994010153
 PrefabInstance:
@@ -1898,6 +1905,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!4 &1862737521888900034 stripped
 Transform:
@@ -2062,6 +2070,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1001 &2740338235905203566
 PrefabInstance:
@@ -2221,6 +2230,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1001 &2981936122844079171
 PrefabInstance:
@@ -2375,6 +2385,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!4 &3380882152508588968 stripped
 Transform:
@@ -2534,6 +2545,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!4 &2916583783508252450 stripped
 Transform:
@@ -2698,6 +2710,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 1
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1001 &3758587024484717188
 PrefabInstance:
@@ -2857,6 +2870,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1001 &3765340225272318588
 PrefabInstance:
@@ -3016,6 +3030,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1001 &4051104094563754334
 PrefabInstance:
@@ -3194,6 +3209,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 1
   isFollow: 1
+  IsRemoveToWin: 1
   isWinningObject: 1
   coinTag: Head
 --- !u!4 &4589960530443568821 stripped
@@ -3354,6 +3370,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!4 &4377119245609369340 stripped
 Transform:
@@ -3518,6 +3535,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1001 &7113773030362857776
 PrefabInstance:
@@ -3677,6 +3695,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1001 &7308639591709751170
 PrefabInstance:
@@ -3836,6 +3855,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!1001 &7497613534024997640
 PrefabInstance:
@@ -3990,6 +4010,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!4 &8036223514812218595 stripped
 Transform:
@@ -4149,6 +4170,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!4 &7852754357198940914 stripped
 Transform:
@@ -4308,6 +4330,7 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
 --- !u!4 &7732910280183174486 stripped
 Transform:
@@ -4472,4 +4495,5 @@ MonoBehaviour:
   targetTag: Head
   isGoal: 0
   isFollow: 0
+  IsRemoveToWin: 1
   isWinningObject: 1
